@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QFrame
+from PyQt5.QtWidgets import QFrame, QGraphicsDropShadowEffect
 
 from ui.components.VideoContent import VideoContent
 
@@ -9,7 +9,6 @@ class MainFrame(QFrame):
         super().__init__()
         self.setStyleSheet("""
                 background-color: #FFFFFF;
-                border-radius: 40px 40px 0px 0px;
-                box-shadow: 12px 12px 8px purple;
+                border-radius: 10px;
         """)
-        self.setLayout(VideoContent())
+        self.setLayout(VideoContent(self).layout())

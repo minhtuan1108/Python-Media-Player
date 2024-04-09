@@ -1,37 +1,34 @@
 import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
+from PyQt5.QtMultimediaWidgets import QVideoWidget
+from PyQt5.QtCore import Qt
 
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QApplication, QFrame, QVBoxLayout
+class CustomVideoWidget(QVideoWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
+    def mouseMoveEvent(self, event):
+        print("Mouse moved over video widget:", event.pos())
 
-class StyledLayoutWidget(QWidget):
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # Set background color and corner radius for the widget
-        self.setStyleSheet('background-color: black; border-radius: 10px; padding: 10px;')
+        self.setWindowTitle("Custom Video Widget Example")
+        self.setGeometry(100, 100, 400, 300)
 
-        frame = QFrame(self)
-        frame.setFrameShape(QFrame.StyledPanel)
-        frame.setStyleSheet('background-color: white; border-radius: 40px;')
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
 
-        vbox = QVBoxLayout()
-        vbox.addWidget(frame)
+        layout = QVBoxLayout()
+        central_widget.setLayout(layout)
 
-        hbox = QHBoxLayout()
-        btn1 = QPushButton('Button 1')
-        btn1.setStyleSheet('background-color: yellow; border-radius: 10px;')
-        btn2 = QPushButton('Button 2')
-        btn2.setStyleSheet('background-color: green; border-radius: 10px')
-        hbox.addWidget(btn1)
-        hbox.addWidget(btn2)
-        frame.setLayout(hbox)
-        self.setLayout(vbox)
+        # Tạo video widget tùy chỉnh
+        self.video_widget = CustomVideoWidget()
+        layout.addWidget(self.video_widget)
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = StyledLayoutWidget()
-    window.setWindowTitle('Styled Layout Example')
-    window.setGeometry(100, 100, 400, 200)
+    window = MainWindow()
     window.show()
     sys.exit(app.exec_())
