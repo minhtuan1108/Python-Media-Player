@@ -11,15 +11,15 @@ from ui.components.Tab_bar import Tab_Bar
 class MediaPlayer(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle('Python Media Player')
-        self.setWindowIcon(QIcon('/themes/logo.png'))
+
 
         # Tạo widget để chứa các thành phần bên trong
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
+        self.central_widget.setWindowIcon(QIcon('assets/logo.png'))
         
         self.central_widget.setStyleSheet("""
-            background-color: rgba(22, 20, 22, 0.76);
+                background: black;
         """)
 
         # Tạo một layout để chứa các thành phần bên trong
@@ -37,6 +37,8 @@ class MediaPlayer(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = MediaPlayer()
+    window.setWindowTitle('Python Media Player')
+    window.setWindowIcon(QIcon('assets/logo.png'))
     window.setGeometry(300, 300, 600, 400)
     window.show()
     sys.exit(app.exec_())
