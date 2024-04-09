@@ -1,16 +1,39 @@
-# This is a sample Python script.
+import sys
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QMainWindow, QApplication, QHBoxLayout, QWidget
+
+from ui.components.MainFrame import MainFrame
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+# Main container for all screen
+class MediaPlayer(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle('Python Media Player')
+        self.setWindowIcon(QIcon('/themes/logo.png'))
+
+        # Tạo widget để chứa các thành phần bên trong
+        self.central_widget = QWidget()
+        self.setCentralWidget(self.central_widget)
+        self.central_widget.setStyleSheet("""
+            background-color: rgba(22, 20, 22, 0.76);
+        """)
+
+        # Tạo một layout để chứa các thành phần bên trong
+        self.hBoxLayout = QHBoxLayout()
+        self.hBoxLayout.setContentsMargins(10, 0, 10, 0)
+
+        # Thêm component cần test vào đây
+        self.hBoxLayout.addWidget(MainFrame())
+
+        self.setLayout(self.hBoxLayout)
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    app = QApplication(sys.argv)
+    window = MediaPlayer()
+    window.setGeometry(300, 300, 600, 400)
+    window.show()
+    sys.exit(app.exec_())
