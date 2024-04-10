@@ -12,19 +12,18 @@ class MediaPlayer(QMainWindow):
     def __init__(self):
         super().__init__()
 
-
         # Tạo widget để chứa các thành phần bên trong
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
         self.central_widget.setWindowIcon(QIcon('assets/logo.png'))
-        
+
         self.central_widget.setStyleSheet("""
                 background: black;
         """)
 
         # Tạo một layout để chứa các thành phần bên trong
         self.hBoxLayout = QVBoxLayout()
-        self.hBoxLayout.setContentsMargins(10, 0, 10, 0)
+        self.hBoxLayout.setContentsMargins(10, 0, 10, 10)
 
         # Thêm component cần test vào đây
         self.hBoxLayout.addLayout(Tab_Bar())
