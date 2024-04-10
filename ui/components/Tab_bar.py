@@ -42,17 +42,17 @@ class Tab_Bar(QHBoxLayout):
             
         # Create and style buttons
         self.button1 = QPushButton("Now playing")
-        self.button1.setIcon(QIcon('./themes/nowplaying.png'))
+        self.button1.setIcon(QIcon('./assets/nowplaying.png'))
         self.button1.clicked.connect(self.on_click_btn1)
         self.button1.setFixedSize(145, 40)
 
         self.button2 = QPushButton("Library")
-        self.button2.setIcon(QIcon('./themes/library.png'))
+        self.button2.setIcon(QIcon('./assets/library.png'))
         self.button2.clicked.connect(self.on_click_btn2)
         self.button2.setFixedSize(145, 40)
 
         self.button3 = QPushButton("Playlist")
-        self.button3.setIcon(QIcon('./themes/playlist.png'))
+        self.button3.setIcon(QIcon('./assets/playlist.png'))
         self.button3.clicked.connect(self.on_click_btn3)
         self.button3.setFixedSize(145, 40)
         
