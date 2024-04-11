@@ -18,9 +18,9 @@ class VideoContent(QGridLayout):
 
         # Tạo khung chứa video
         self.videoWidget = QVideoWidget()
-        # self.media_player = MyMediaPlayer(self)
-        # self.media_player.setVideoOutput(self.videoWidget)
-        # self.media_player.play_from_url("https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8")
+        self.media_player = MyMediaPlayer(self)
+        self.media_player.setVideoOutput(self.videoWidget)
+        self.media_player.play_from_url("https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8")
 
         # Tạo frame để điều chỉnh layout
         self.frame = QFrame()
