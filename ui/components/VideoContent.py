@@ -11,14 +11,18 @@ class VideoContent(QGridLayout):
     def __init__(self, parent: QFrame):
         super().__init__()
         self.setContentsMargins(0, 0, 0, 0)
+        self.parent = parent
         # Thiết lập sự kiện chuột
+        parent.setMouseTracking(True)
         parent.enterEvent = self.frame_enter_event
         parent.leaveEvent = self.frame_leave_event
+        parent.mouseReleaseEvent = self.handle_mouse_in_frame
 
         # Tạo khung chứa video
         self.videoWidget = QVideoWidget()
         self.videoWidget.setStyleSheet("border-radius: 20px;")
         self.videoWidget.mousePressEvent = self.play_pause_video
+        self.videoWidget.mouseDoubleClickEvent = self.fullscreen
         self.media_player = MyMediaPlayer(self)
         self.media_player.setVideoOutput(self.videoWidget)
         self.media_player.positionChanged.connect(self.position_change)
@@ -62,9 +66,11 @@ class VideoContent(QGridLayout):
         # Tạo button tua ngược 10s
         self.replay10Button = QPushButton()
         self.replay10Button.setIcon(QIcon("assets/replay10.png"))
+        self.replay10Button.clicked.connect(self.play_back_10)
 
         # Tao label dem thoi gian
         self.time_label = QLabel()
+        self.time_label.setStyleSheet("background-color: none;")
 
         # Tạo layout chưa cac nút bên trên
         self.playVideoBox = QHBoxLayout()
@@ -101,10 +107,21 @@ class VideoContent(QGridLayout):
         # Tạo box chứa phần điều chỉnh âm lượng và tốc độ phát
         self.soundBox = QHBoxLayout()
         self.soundBox.setAlignment(Qt.AlignRight)
-        self.speakerButton.enterEvent(self.volumeSlider.show())
-        self.speakerButton.leaveEvent(self.volumeSlider.hide())
-        self.soundBox.addWidget(self.speakerButton)
-        self.soundBox.addWidget(self.volumeSlider)
+
+        # Tao frame fix voi noi dung de xu ly su kien
+        self.soundFixedFrame = QFrame()
+        self.soundFixedFrame.setMinimumWidth(36)
+        self.soundFixedFrame.setMaximumWidth(140)
+        self.soundFixedFrame.enterEvent = self.speaker_enter_event
+        self.soundFixedFrame.leaveEvent = self.speaker_leave_event
+
+        # Tao layout fix de chua
+        self.soundFixedBox = QHBoxLayout()
+        self.soundFixedBox.setAlignment(Qt.AlignRight)
+        self.soundFixedBox.addWidget(self.speakerButton)
+        self.soundFixedBox.addWidget(self.volumeSlider)
+        self.soundFixedFrame.setLayout(self.soundFixedBox)
+        self.soundBox.addWidget(self.soundFixedFrame)
         self.containButtonsBox.addLayout(self.soundBox)
 
         # Tạo thanh thời gian
@@ -134,11 +151,6 @@ class VideoContent(QGridLayout):
         self.volumeSlider.setValue(volume)
         self.media_player.setVolume(volume)
         self.currentVolume = volume
-        # self.setStyleSheetSlider()
-
-    def setStyleSheetSlider(self):
-        slider_value = self.volumeSlider.value() / 100
-        self.volumeSlider.setStyleSheet(self.slider_style % (str(0), str(slider_value)))
 
     def frame_enter_event(self, event):
         # Hiển thị nút khi di chuyển chuột vào frame
@@ -148,6 +160,10 @@ class VideoContent(QGridLayout):
         # Ẩn frame khi di chuyển chuột ra khỏi frame
         self.frame.hide()
 
+    def handle_mouse_in_frame(self, event):
+        print(event.x())
+        print(event.y())
+
     def play_pause_video(self, event = None):
         # Phát hoặc tạm dừng video
         if self.media_player.state() == QMediaPlayer.PlayingState:
@@ -156,10 +172,23 @@ class VideoContent(QGridLayout):
         else:
             self.media_player.play()
             self.playButton.setIcon(QIcon("assets/pause.png"))
+    
+    def fullscreen(self, event):
+        if self.parent.windowState() & Qt.WindowFullScreen:
+            QApplication.setOverrideCursor(Qt.ArrowCursor)
+            self.parent.showNormal()
+            print("no Fullscreen")
+        else:
+            self.parent.showFullScreen()
+            QApplication.setOverrideCursor(Qt.BlankCursor)
+            print("Fullscreen entered")
 
-    def hover_speaker(self, event):
-        print(event)
+    def speaker_enter_event(self, event):
         self.volumeSlider.show()
+
+    def speaker_leave_event(self, event):
+        # print(event)
+        self.volumeSlider.hide()
 
     def speaker_onclick(self):
         # Tắt hoặc bật âm thanh video
@@ -176,11 +205,10 @@ class VideoContent(QGridLayout):
             self.media_player.setVolume(self.currentVolume)
         
     def play_forward_10(self):
-        # Tua 10s
-        pass
+        self.media_player.setPosition(self.media_player.position() + 10000)
 
     def play_back_10(self):
-        pass
+        self.media_player.setPosition(self.media_player.position() - 10000)
 
     def position_change(self, position):
         self.timeSlider.setValue(position)
