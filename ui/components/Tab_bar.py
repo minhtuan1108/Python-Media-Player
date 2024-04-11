@@ -1,7 +1,6 @@
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWebEngineWidgets import *
 class Tab_Bar(QHBoxLayout):
     def __init__(self):
         super().__init__()
@@ -41,13 +40,13 @@ class Tab_Bar(QHBoxLayout):
                                 """)
             
         # Create and style buttons
-        self.button1 = QPushButton("Now playing")
-        self.button1.setIcon(QIcon('./assets/nowplaying.png'))
+        self.button1 = QPushButton("Library")
+        self.button1.setIcon(QIcon('./assets/library.png'))
         self.button1.clicked.connect(self.on_click_btn1)
         self.button1.setFixedSize(145, 40)
 
-        self.button2 = QPushButton("Library")
-        self.button2.setIcon(QIcon('./assets/library.png'))
+        self.button2 = QPushButton("Now Playing")
+        self.button2.setIcon(QIcon('./assets/nowplaying.png'))
         self.button2.clicked.connect(self.on_click_btn2)
         self.button2.setFixedSize(145, 40)
 
@@ -59,8 +58,8 @@ class Tab_Bar(QHBoxLayout):
         # set style for button
         self.active_button_style = "background-color: white; color: black; border-radius: 20px; font-size: 16px;"
         self.default_style = "background-color: #969696; color: black; border-radius: 20px; font-size: 16px;"
-        self.button1.setStyleSheet(self.active_button_style)
-        self.button2.setStyleSheet(self.default_style)
+        self.button1.setStyleSheet(self.default_style)
+        self.button2.setStyleSheet(self.active_button_style)
         self.button3.setStyleSheet(self.default_style)
        
         
@@ -81,11 +80,11 @@ class Tab_Bar(QHBoxLayout):
         sender=  self.sender()
         text = sender.text()
         print(text)
-        if text == "Now playing":
+        if text == "Library":
             self.button1.setStyleSheet(self.active_button_style)
             self.button2.setStyleSheet(self.default_style)
             self.button3.setStyleSheet(self.default_style)
-        elif text == "Library":
+        elif text == "Now Playing":
             self.button1.setStyleSheet(self.default_style)
             self.button2.setStyleSheet(self.active_button_style)
             self.button3.setStyleSheet(self.default_style)
