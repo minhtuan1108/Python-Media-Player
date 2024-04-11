@@ -1,9 +1,8 @@
-from PyQt5.QtCore import Qt, QSize, QTimer
-from PyQt5.QtGui import QIcon, QCursor
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 from PyQt5.QtMultimedia import QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import QVBoxLayout, QWidget, QHBoxLayout, QPushButton, QLabel, QSlider, QToolButton, QComboBox, \
-    QFrame, QGraphicsEffect, QGraphicsOpacityEffect, QGraphicsDropShadowEffect, QGridLayout
+from PyQt5.QtWidgets import *
 
 from ui.components.MediaPlayer import MyMediaPlayer
 
@@ -18,9 +17,11 @@ class VideoContent(QGridLayout):
 
         # Tạo khung chứa video
         self.videoWidget = QVideoWidget()
-        # self.media_player = MyMediaPlayer(self)
-        # self.media_player.setVideoOutput(self.videoWidget)
-        # self.media_player.play_from_url("https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8")
+        self.videoWidget.setStyleSheet("border-radius: 20px")
+        self.videoWidget.mousePressEvent = self.play_pause_video
+        self.media_player = MyMediaPlayer(self)
+        self.media_player.setVideoOutput(self.videoWidget)
+        self.media_player.play_from_url("https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8")
 
         # Tạo frame để điều chỉnh layout
         self.frame = QFrame()
@@ -28,14 +29,15 @@ class VideoContent(QGridLayout):
         self.frame.setFrameShape(QFrame.StyledPanel)
         self.frame.setFixedHeight(80)
         self.frame.setStyleSheet("""
-                        QFrame{
-                            background-color: rgba(0, 0, 0, 0.15);
-                        }
+                            QFrame {
+                                 background-color: rgba(0, 0, 0, 0.15);
+                                 border-radius: 10px;
+                            }
 
-                        QToolButton{
-                            background-color: none;
-                        }
-                """)
+                            QPushButton{
+                                background-color: none;
+                            }
+            """)
 
         # Tạo khung chứa thanh thời gian của video và các nút chức năng
         self.containerBox = QVBoxLayout()
@@ -45,17 +47,17 @@ class VideoContent(QGridLayout):
         self.containButtonsBox = QHBoxLayout()
 
         # Tạo button play
-        self.playButton = QToolButton()
-        self.playButton.setIcon(QIcon("assets/play.png"))
+        self.playButton = QPushButton()
+        self.playButton.setIcon(QIcon("assets/pause.png"))
         self.playButton.setIconSize(QSize(32, 32))
         self.playButton.clicked.connect(self.play_pause_video)
 
         # Tạo button tua tới 10s
-        self.forward10Button = QToolButton()
+        self.forward10Button = QPushButton()
         self.forward10Button.setIcon(QIcon("assets/forward10.png"))
 
         # Tạo button tua ngược 10s
-        self.replay10Button = QToolButton()
+        self.replay10Button = QPushButton()
         self.replay10Button.setIcon(QIcon("assets/replay10.png"))
 
         # Tạo layout chưa 3 nút bên trên
@@ -67,8 +69,9 @@ class VideoContent(QGridLayout):
         self.containButtonsBox.addLayout(self.playVideoBox)
 
         # Tạo Label loa
-        self.speakerButton = QToolButton()
+        self.speakerButton = QPushButton()
         self.speakerButton.setIcon(QIcon("assets/speaker.png"))
+        self.speakerButton.setFixedWidth(32)
         self.speakerButton.setIconSize(QSize(32, 32))
 
         # Tạo thanh âm lượng
@@ -118,23 +121,16 @@ class VideoContent(QGridLayout):
         self.containButtonsBox.addLayout(self.soundBox)
 
         # Tạo thanh thời gian
-        self.positionSlider = QSlider(Qt.Horizontal)
-        self.positionSlider.setStyleSheet(stylesheet(self))
-        self.positionSlider.setRange(0, 100)
-        self.positionSlider.setValue(50)
+        self.timeSlider = QSlider(Qt.Horizontal)
+        self.timeSlider.setStyleSheet(stylesheet(self))
+        self.timeSlider.setRange(0, 100)
+        self.timeSlider.setValue(50)
         # self.positionSlider.sliderMoved.connect(self.setPosition)
-        self.positionSlider.setSingleStep(2)
-        self.positionSlider.setPageStep(20)
-        self.positionSlider.setAttribute(Qt.WA_TranslucentBackground, True)
+        self.timeSlider.setSingleStep(2)
+        self.timeSlider.setPageStep(20)
+        self.timeSlider.setAttribute(Qt.WA_TranslucentBackground, True)
 
-        # # Thêm các button vào layout
-        # self.containButtonsBox.addWidget(self.replay10Button)
-        # self.containButtonsBox.addWidget(self.playButton)
-        # self.containButtonsBox.addWidget(self.forward10Button)
-        # self.containButtonsBox.addWidget(self.speakerButton)
-        # self.containButtonsBox.addWidget(self.volumeSlider)
-
-        self.containerBox.addWidget(self.positionSlider)
+        self.containerBox.addWidget(self.timeSlider)
         self.containerBox.addLayout(self.containButtonsBox)
 
         self.addWidget(self.videoWidget, 0, 0)
@@ -163,7 +159,7 @@ class VideoContent(QGridLayout):
         # Ẩn frame khi di chuyển chuột ra khỏi frame
         self.frame.hide()
 
-    def play_pause_video(self):
+    def play_pause_video(self, event = None):
         # Phát hoặc tạm dừng video
         if self.media_player.state() == QMediaPlayer.PlayingState:
             self.media_player.pause()
@@ -184,7 +180,6 @@ width: 16px;
 height: 16px;
 margin: -5px 0;
 border-radius: 8px;
-transition: background-color 0.5s ease;
 }
 
 QSlider::groove:horizontal {
@@ -208,28 +203,5 @@ width: 16px;
 height: 16px;
 margin: -5px 0;
 border-radius: 8px;
-}
-
-QSlider::sub-page:horizontal:disabled {
-background: #bbbbbb;
-border-color: #999999;
-}
-
-QSlider::add-page:horizontal:disabled {
-background: #2a82da;
-border-color: #999999;
-}
-
-QSlider::handle:horizontal:disabled {
-background: #2a82da;
-}
-
-QLineEdit
-{
-background: black;
-color: #585858;
-border: 0px solid #076100;
-font-size: 8pt;
-font-weight: bold;
 }
     """
