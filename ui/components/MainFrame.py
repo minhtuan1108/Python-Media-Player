@@ -7,8 +7,5 @@ from ui.components.VideoContent import VideoContent
 class MainFrame(QFrame):
     def __init__(self):
         super().__init__()
-        self.setStyleSheet("""
-                background-color: #FFFFFF;
-                border-radius: 10px;
-        """)
+        self.setStyleSheet("background-color: #FFFFFF; border-radius: 10px;")
         self.setLayout(VideoContent(self).layout())

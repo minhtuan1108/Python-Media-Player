@@ -17,9 +17,7 @@ class MediaPlayer(QMainWindow):
         self.setCentralWidget(self.central_widget)
         self.central_widget.setWindowIcon(QIcon('assets/logo.png'))
 
-        self.central_widget.setStyleSheet("""
-                background: black;
-        """)
+        self.central_widget.setStyleSheet("background: black;")
 
         # Tạo một layout để chứa các thành phần bên trong
         self.hBoxLayout = QVBoxLayout()
