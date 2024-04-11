@@ -64,34 +64,7 @@ class VideoContent(QGridLayout):
         self.replay10Button.setIcon(QIcon("assets/replay10.png"))
 
         # Tao label dem thoi gian
-        self.lbl = QLineEdit('00:00:00')
-        self.lbl.setReadOnly(True)
-        self.lbl.setFixedWidth(70)
-        self.lbl.setUpdatesEnabled(True)
-        self.lbl.setStyleSheet(stylesheet(self))
-        self.lbl.selectionChanged.connect(lambda: self.lbl.setSelection(0, 0))
-
-        self.seperator = QLineEdit('/')
-        self.seperator.setReadOnly(True)
-        self.seperator.setFixedWidth(10)
-        self.seperator.setUpdatesEnabled(False)
-        self.seperator.setStyleSheet(stylesheet(self))
-        self.seperator.selectionChanged.connect(lambda: self.elbl.setSelection(0, 0))
-
-        self.elbl = QLineEdit('00:00:00')
-        self.elbl.setReadOnly(True)
-        self.elbl.setFixedWidth(70)
-        self.elbl.setUpdatesEnabled(True)
-        self.elbl.setStyleSheet(stylesheet(self))
-        self.elbl.selectionChanged.connect(lambda: self.elbl.setSelection(0, 0))
-
-        self.timeVideoBox = QHBoxLayout()
-        self.addWidget(self.lbl)
-        self.addWidget(self.seperator)
-        self.addWidget(self.elbl)
-
-        self.timeFrame = QFrame()
-        self.timeFrame.setLayout(self.timeVideoBox)
+        self.time_label = QLabel()
 
         # Tạo layout chưa cac nút bên trên
         self.playVideoBox = QHBoxLayout()
@@ -99,7 +72,7 @@ class VideoContent(QGridLayout):
         self.playVideoBox.addWidget(self.replay10Button)
         self.playVideoBox.addWidget(self.playButton)
         self.playVideoBox.addWidget(self.forward10Button)
-        self.playVideoBox.addWidget(self.timeFrame)
+        self.playVideoBox.addWidget(self.time_label)
         self.containButtonsBox.addLayout(self.playVideoBox)
 
         # Tạo Label loa
@@ -213,13 +186,21 @@ class VideoContent(QGridLayout):
         self.timeSlider.setValue(position)
         mtime = QTime(0, 0, 0, 0)
         mtime = mtime.addMSecs(self.media_player.position())
-        self.lbl.setText(mtime.toString())
+        self.update_time_label()
     
     def duration_change(self, duration):
         self.timeSlider.setRange(0, duration)
         mtime = QTime(0, 0, 0, 0)
         mtime = mtime.addMSecs(self.media_player.duration())
-        self.elbl.setText(mtime.toString())
+        self.update_time_label()
+
+    def update_time_label(self):
+        # Cập nhật label với thời gian hiện tại và thời lượng toàn bộ của video
+        current_time = self.media_player.position() / 1000 # Đổi từ milliseconds thành giây
+        total_time = self.media_player.duration() / 1000 # Đổi từ milliseconds thành giây
+        current_time_string = QTime(0, 0).addSecs(current_time).toString("mm:ss")
+        total_time_string = QTime(0, 0).addSecs(total_time).toString("mm:ss")
+        self.time_label.setText(f"{current_time_string} / {total_time_string}")
 
 
 def stylesheet(self):
@@ -259,7 +240,7 @@ margin: -5px 0;
 border-radius: 8px;
 }
 
-QLineEdit
+QLabel
 {
 background: black;
 color: #585858;
