@@ -17,7 +17,7 @@ class VideoContent(QGridLayout):
 
         # Tạo khung chứa video
         self.videoWidget = QVideoWidget()
-        self.videoWidget.setStyleSheet("border-radius: 20px")
+        self.videoWidget.setStyleSheet("border-radius: 20px;")
         self.videoWidget.mousePressEvent = self.play_pause_video
         self.media_player = MyMediaPlayer(self)
         self.media_player.setVideoOutput(self.videoWidget)
