@@ -21,6 +21,8 @@ class VideoContent(QGridLayout):
         self.videoWidget.mousePressEvent = self.play_pause_video
         self.media_player = MyMediaPlayer(self)
         self.media_player.setVideoOutput(self.videoWidget)
+        self.media_player.positionChanged.connect(self.position_change)
+        self.media_player.durationChanged.connect(self.duration_change)
         self.media_player.play_from_url("https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8")
 
         # Tạo frame để điều chỉnh layout
@@ -55,17 +57,49 @@ class VideoContent(QGridLayout):
         # Tạo button tua tới 10s
         self.forward10Button = QPushButton()
         self.forward10Button.setIcon(QIcon("assets/forward10.png"))
+        self.forward10Button.clicked.connect(self.play_forward_10)
 
         # Tạo button tua ngược 10s
         self.replay10Button = QPushButton()
         self.replay10Button.setIcon(QIcon("assets/replay10.png"))
 
-        # Tạo layout chưa 3 nút bên trên
+        # Tao label dem thoi gian
+        self.lbl = QLineEdit('00:00:00')
+        self.lbl.setReadOnly(True)
+        self.lbl.setFixedWidth(70)
+        self.lbl.setUpdatesEnabled(True)
+        self.lbl.setStyleSheet(stylesheet(self))
+        self.lbl.selectionChanged.connect(lambda: self.lbl.setSelection(0, 0))
+
+        self.seperator = QLineEdit('/')
+        self.seperator.setReadOnly(True)
+        self.seperator.setFixedWidth(10)
+        self.seperator.setUpdatesEnabled(False)
+        self.seperator.setStyleSheet(stylesheet(self))
+        self.seperator.selectionChanged.connect(lambda: self.elbl.setSelection(0, 0))
+
+        self.elbl = QLineEdit('00:00:00')
+        self.elbl.setReadOnly(True)
+        self.elbl.setFixedWidth(70)
+        self.elbl.setUpdatesEnabled(True)
+        self.elbl.setStyleSheet(stylesheet(self))
+        self.elbl.selectionChanged.connect(lambda: self.elbl.setSelection(0, 0))
+
+        self.timeVideoBox = QHBoxLayout()
+        self.addWidget(self.lbl)
+        self.addWidget(self.seperator)
+        self.addWidget(self.elbl)
+
+        self.timeFrame = QFrame()
+        self.timeFrame.setLayout(self.timeVideoBox)
+
+        # Tạo layout chưa cac nút bên trên
         self.playVideoBox = QHBoxLayout()
         self.playVideoBox.setAlignment(Qt.AlignLeft)
         self.playVideoBox.addWidget(self.replay10Button)
         self.playVideoBox.addWidget(self.playButton)
         self.playVideoBox.addWidget(self.forward10Button)
+        self.playVideoBox.addWidget(self.timeFrame)
         self.containButtonsBox.addLayout(self.playVideoBox)
 
         # Tạo Label loa
@@ -73,39 +107,18 @@ class VideoContent(QGridLayout):
         self.speakerButton.setIcon(QIcon("assets/speaker.png"))
         self.speakerButton.setFixedWidth(32)
         self.speakerButton.setIconSize(QSize(32, 32))
+        self.speakerButton.clicked.connect(self.speaker_onclick)
 
         # Tạo thanh âm lượng
+        self.currentVolume = 100
         self.volumeSlider = QSlider(Qt.Horizontal)
+        self.volumeSlider.hide()
         self.volumeSlider.setFixedWidth(100)
         self.volumeSlider.setMinimum(0)
         self.volumeSlider.setMaximum(100)
-        self.volumeSlider.setValue(100)  # Default volume
-        self.volumeSlider.sliderMoved.connect(self.changeVolume)
-        # self.volumeSlider.sliderReleased.connect(self.slider_released)
-        # Khi thanh trượt được nhấn, xử lý sự kiện
-        # self.volumeSlider.sliderPressed.connect(self.slider_pressed)
-        self.slider_style = """
-                    QSlider{
-                        background-color: none
-                    }
-                   QSlider::groove:horizontal {
-                       border: none;
-                       height: 6px; /* Chiều cao của thanh slider */
-                       margin: 0px;
-                       border-radius: 3px; /* Bo tròn các góc */
-                       background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                    stop:%s #0B23FF, stop:%s #999999);
-                   }
-                   QSlider::handle:horizontal {
-                       background: #FFFFFF; /* Màu của handle */
-                       border: none;
-                       width: 16px; /* Chiều rộng của handle */
-                       height: 16px; /* Chiều cao của handle */
-                       margin: -5px 0; /* Điều chỉnh vị trí handle */
-                       border-radius: 8px; /* Bo tròn các góc */
-                   }
-               """
-        self.setStyleSheetSlider()
+        self.volumeSlider.setValue(self.currentVolume)  # Default volume
+        self.volumeSlider.sliderMoved.connect(self.changeVolume)  
+        self.volumeSlider.setStyleSheet(stylesheet(self))
 
         # Tạo nút chỉnh tốc độ video
         self.speedComboBox = QComboBox()
@@ -115,7 +128,8 @@ class VideoContent(QGridLayout):
         # Tạo box chứa phần điều chỉnh âm lượng và tốc độ phát
         self.soundBox = QHBoxLayout()
         self.soundBox.setAlignment(Qt.AlignRight)
-        # self.soundBox.addWidget(self.speedComboBox)
+        self.speakerButton.enterEvent(self.volumeSlider.show())
+        self.speakerButton.leaveEvent(self.volumeSlider.hide())
         self.soundBox.addWidget(self.speakerButton)
         self.soundBox.addWidget(self.volumeSlider)
         self.containButtonsBox.addLayout(self.soundBox)
@@ -124,7 +138,7 @@ class VideoContent(QGridLayout):
         self.timeSlider = QSlider(Qt.Horizontal)
         self.timeSlider.setStyleSheet(stylesheet(self))
         self.timeSlider.setRange(0, 100)
-        self.timeSlider.setValue(50)
+        self.timeSlider.setValue(100)
         # self.positionSlider.sliderMoved.connect(self.setPosition)
         self.timeSlider.setSingleStep(2)
         self.timeSlider.setPageStep(20)
@@ -145,7 +159,9 @@ class VideoContent(QGridLayout):
             filepath = "assets/low-speaker.png"
         self.speakerButton.setIcon(QIcon(filepath))
         self.volumeSlider.setValue(volume)
-        self.setStyleSheetSlider()
+        self.media_player.setVolume(volume)
+        self.currentVolume = volume
+        # self.setStyleSheetSlider()
 
     def setStyleSheetSlider(self):
         slider_value = self.volumeSlider.value() / 100
@@ -167,6 +183,44 @@ class VideoContent(QGridLayout):
         else:
             self.media_player.play()
             self.playButton.setIcon(QIcon("assets/pause.png"))
+
+    def hover_speaker(self, event):
+        print(event)
+        self.volumeSlider.show()
+
+    def speaker_onclick(self):
+        # Tắt hoặc bật âm thanh video
+        if self.volumeSlider.value() > 0:
+            self.speakerButton.setIcon(QIcon("assets/mute.png"))
+            self.volumeSlider.setValue(0)
+            self.media_player.setVolume(0)
+        else:
+            if self.currentVolume > 60:
+                self.speakerButton.setIcon(QIcon("assets/mute.png"))
+            else:
+                self.speakerButton.setIcon(QIcon("assets/low-speaker.png"))
+            self.volumeSlider.setValue(self.currentVolume)
+            self.media_player.setVolume(self.currentVolume)
+        
+    def play_forward_10(self):
+        # Tua 10s
+        pass
+
+    def play_back_10(self):
+        pass
+
+    def position_change(self, position):
+        self.timeSlider.setValue(position)
+        mtime = QTime(0, 0, 0, 0)
+        mtime = mtime.addMSecs(self.media_player.position())
+        self.lbl.setText(mtime.toString())
+    
+    def duration_change(self, duration):
+        self.timeSlider.setRange(0, duration)
+        mtime = QTime(0, 0, 0, 0)
+        mtime = mtime.addMSecs(self.media_player.duration())
+        self.elbl.setText(mtime.toString())
+
 
 def stylesheet(self):
     return """
@@ -203,5 +257,14 @@ width: 16px;
 height: 16px;
 margin: -5px 0;
 border-radius: 8px;
+}
+
+QLineEdit
+{
+background: black;
+color: #585858;
+border: 0px solid #076100;
+font-size: 8pt;
+font-weight: bold;
 }
     """
