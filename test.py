@@ -264,7 +264,7 @@ class VideoPlayer(QWidget):
             print("no Fullscreen")
         else:
             self.showFullScreen()
-            QApplication.setOverrideCursor(Qt.BlankCursor)
+            # QApplication.setOverrideCursor(Qt.BlankCursor)
             print("Fullscreen entered")
 
     def handleInfo(self):
@@ -453,7 +453,7 @@ if __name__ == '__main__':
     player.setWindowIcon(QIcon.fromTheme("multimedia-video-player"))
     player.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
     player.setGeometry(100, 300, 600, 380)
-    player.setContextMenuPolicy(Qt.CustomContextMenu);
+    player.setContextMenuPolicy(Qt.CustomContextMenu)
     player.customContextMenuRequested[QPoint].connect(player.contextMenuRequested)
     player.hideSlider()
     player.show()

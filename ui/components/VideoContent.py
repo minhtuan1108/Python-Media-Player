@@ -27,7 +27,8 @@ class VideoContent(QGridLayout):
         self.media_player.setVideoOutput(self.videoWidget)
         self.media_player.positionChanged.connect(self.position_change)
         self.media_player.durationChanged.connect(self.duration_change)
-        self.media_player.play_from_url("https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8")
+        self.media_player.error.connect(self.handleError)
+        # self.media_player.play_from_url()
 
         # Tạo frame để điều chỉnh layout
         self.frame = QFrame()
@@ -164,6 +165,9 @@ class VideoContent(QGridLayout):
         print(event.x())
         print(event.y())
 
+    def stop_media_player(self):
+        self.media_player.stop()
+
     def play_pause_video(self, event = None):
         # Phát hoặc tạm dừng video
         if self.media_player.state() == QMediaPlayer.PlayingState:
@@ -172,16 +176,6 @@ class VideoContent(QGridLayout):
         else:
             self.media_player.play()
             self.playButton.setIcon(QIcon("assets/pause.png"))
-    
-    def fullscreen(self, event):
-        if self.parent.windowState() & Qt.WindowFullScreen:
-            QApplication.setOverrideCursor(Qt.ArrowCursor)
-            self.parent.showNormal()
-            print("no Fullscreen")
-        else:
-            self.parent.showFullScreen()
-            QApplication.setOverrideCursor(Qt.BlankCursor)
-            print("Fullscreen entered")
 
     def speaker_enter_event(self, event):
         self.volumeSlider.show()
@@ -221,6 +215,10 @@ class VideoContent(QGridLayout):
         mtime = QTime(0, 0, 0, 0)
         mtime = mtime.addMSecs(self.media_player.duration())
         self.update_time_label()
+
+    def handleError(self):
+        self.playButton.setEnabled(False)
+        print("Error: ", self.mediaPlayer.errorString())
 
     def update_time_label(self):
         # Cập nhật label với thời gian hiện tại và thời lượng toàn bộ của video

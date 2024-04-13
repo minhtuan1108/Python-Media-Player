@@ -1,6 +1,7 @@
 import sys
 
 from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtWidgets import QMainWindow, QApplication, QHBoxLayout, QWidget, QVBoxLayout
 
 from ui.components.MainFrame import MainFrame
@@ -25,7 +26,8 @@ class MediaPlayer(QMainWindow):
 
         # Thêm component cần test vào đây
         self.hBoxLayout.addLayout(Tab_Bar())
-        self.hBoxLayout.addWidget(MainFrame())
+        self.mainFrame = MainFrame(self)
+        self.hBoxLayout.addWidget(self.mainFrame)
 
         self.central_widget.setLayout(self.hBoxLayout)
 
@@ -37,5 +39,7 @@ if __name__ == '__main__':
     window.setWindowTitle('Python Media Player')
     window.setWindowIcon(QIcon('assets/logo.png'))
     window.setGeometry(300, 300, 600, 400)
+    window.setContextMenuPolicy(Qt.CustomContextMenu)
+    window.customContextMenuRequested[QPoint].connect(window.mainFrame.context_menu_requested)
     window.show()
     sys.exit(app.exec_())
