@@ -1,7 +1,7 @@
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon
-class Tab_Bar(QHBoxLayout):
+class Nav_Bar(QHBoxLayout):
     def __init__(self):
         super().__init__()
         self.hbox_layout = QHBoxLayout() # hbox lớn được bọc bởi frame

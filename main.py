@@ -5,7 +5,7 @@ from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtWidgets import QMainWindow, QApplication, QHBoxLayout, QWidget, QVBoxLayout
 
 from ui.components.MainFrame import MainFrame
-from ui.components.Tab_bar import Tab_Bar
+from ui.components.NavBar import Nav_Bar
 
 
 # Main container for all screen
@@ -25,7 +25,7 @@ class MediaPlayer(QMainWindow):
         self.hBoxLayout.setContentsMargins(10, 0, 10, 10)
 
         # Thêm component cần test vào đây
-        self.hBoxLayout.addLayout(Tab_Bar())
+        self.hBoxLayout.addLayout(Nav_Bar())
         self.mainFrame = MainFrame(self)
         self.hBoxLayout.addWidget(self.mainFrame)
 
