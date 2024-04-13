@@ -1,10 +1,13 @@
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5.QtMultimedia import QMediaPlayer
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import *
 
 from ui.components.MediaPlayer import MyMediaPlayer
+from ui.components.InputUrlDialog import InputUrlDialog
+
+import json
 
 
 class VideoContent(QGridLayout):
@@ -12,6 +15,7 @@ class VideoContent(QGridLayout):
         super().__init__()
         self.setContentsMargins(0, 0, 0, 0)
         self.parent = parent
+        self.inputDialog = InputUrlDialog(self)
         # Thiết lập sự kiện chuột
         parent.setMouseTracking(True)
         parent.enterEvent = self.frame_enter_event
@@ -22,9 +26,10 @@ class VideoContent(QGridLayout):
         self.videoWidget = QVideoWidget()
         self.videoWidget.setStyleSheet("border-radius: 20px;")
         self.videoWidget.mousePressEvent = self.play_pause_video
-        self.videoWidget.mouseDoubleClickEvent = self.fullscreen
+        # self.videoWidget.mouseDoubleClickEvent = self.fullscreen
         self.media_player = MyMediaPlayer(self)
         self.media_player.setVideoOutput(self.videoWidget)
+        self.media_player.stateChanged.connect(self.state_change)
         self.media_player.positionChanged.connect(self.position_change)
         self.media_player.durationChanged.connect(self.duration_change)
         self.media_player.error.connect(self.handleError)
@@ -112,7 +117,7 @@ class VideoContent(QGridLayout):
         # Tao frame fix voi noi dung de xu ly su kien
         self.soundFixedFrame = QFrame()
         self.soundFixedFrame.setMinimumWidth(36)
-        self.soundFixedFrame.setMaximumWidth(140)
+        self.soundFixedFrame.setMaximumWidth(150)
         self.soundFixedFrame.enterEvent = self.speaker_enter_event
         self.soundFixedFrame.leaveEvent = self.speaker_leave_event
 
@@ -130,7 +135,7 @@ class VideoContent(QGridLayout):
         self.timeSlider.setStyleSheet(stylesheet(self))
         self.timeSlider.setRange(0, 100)
         self.timeSlider.setValue(100)
-        # self.positionSlider.sliderMoved.connect(self.setPosition)
+        self.timeSlider.sliderMoved.connect(self.set_position)
         self.timeSlider.setSingleStep(2)
         self.timeSlider.setPageStep(20)
         self.timeSlider.setAttribute(Qt.WA_TranslucentBackground, True)
@@ -140,6 +145,17 @@ class VideoContent(QGridLayout):
 
         self.addWidget(self.videoWidget, 0, 0)
         self.addWidget(self.frame, 0, 0, Qt.AlignBottom)
+
+    def add_item_context_menu(self):
+        actionFile = self.parent.menu.addAction(QIcon.fromTheme("video-x-generic"), "open File (o)")
+        actionclipboard = self.parent.menu.addSeparator()
+        actionURL = self.parent.menu.addAction(QIcon.fromTheme("browser"), "URL from Internet (u)")
+        actionclipboard = self.parent.menu.addSeparator()
+        actionYTurl = self.parent.menu.addAction(QIcon.fromTheme("youtube"), "URL from YouTube (y)")
+
+        actionFile.triggered.connect(self.parent.open_file)
+        actionURL.triggered.connect(lambda: self.media_player.get_url_from_clip('http'))
+        actionYTurl.triggered.connect(lambda: self.media_player.get_url_from_clip('youtube'))
 
     def changeVolume(self, volume):
         print(volume)
@@ -165,17 +181,24 @@ class VideoContent(QGridLayout):
         print(event.x())
         print(event.y())
 
+    def load_film(self, file):
+        self.media_player.load_film(file)
+
     def stop_media_player(self):
         self.media_player.stop()
 
-    def play_pause_video(self, event = None):
+    def state_change(self, event):
+        if self.media_player.state() == QMediaPlayer.PlayingState:
+            self.playButton.setIcon(QIcon("assets/pause.png"))
+        else:
+            self.playButton.setIcon(QIcon("assets/play.png"))
+
+    def play_pause_video(self, event):
         # Phát hoặc tạm dừng video
         if self.media_player.state() == QMediaPlayer.PlayingState:
             self.media_player.pause()
-            self.playButton.setIcon(QIcon("assets/play.png"))
         else:
             self.media_player.play()
-            self.playButton.setIcon(QIcon("assets/pause.png"))
 
     def speaker_enter_event(self, event):
         self.volumeSlider.show()
@@ -204,6 +227,10 @@ class VideoContent(QGridLayout):
     def play_back_10(self):
         self.media_player.setPosition(self.media_player.position() - 10000)
 
+    def set_position(self, time):
+        self.media_player.setPosition(time)
+        self.update_time_label()
+
     def position_change(self, position):
         self.timeSlider.setValue(position)
         mtime = QTime(0, 0, 0, 0)
@@ -217,16 +244,68 @@ class VideoContent(QGridLayout):
         self.update_time_label()
 
     def handleError(self):
-        self.playButton.setEnabled(False)
-        print("Error: ", self.mediaPlayer.errorString())
+        # self.playButton.setEnabled(False)
+        errorString = self.media_player.errorString()
+        if "Cannot play stream of type:" in errorString:
+            QMessageBox.critical(self.parent.parent, 'Error', errorString)
+            self.media_player.setMedia(QMediaContent())
+        print("Error: ", errorString)
 
     def update_time_label(self):
         # Cập nhật label với thời gian hiện tại và thời lượng toàn bộ của video
         current_time = self.media_player.position() / 1000 # Đổi từ milliseconds thành giây
-        total_time = self.media_player.duration() / 1000 # Đổi từ milliseconds thành giây
-        current_time_string = QTime(0, 0).addSecs(current_time).toString("mm:ss")
-        total_time_string = QTime(0, 0).addSecs(total_time).toString("mm:ss")
+        total_time = self.media_player.duration() / 1000 # Đổi từ milliseconds thành giây        
+        current_qtime = QTime(0, 0).addSecs(current_time)
+        total_qtime = QTime(0, 0).addSecs(total_time)
+        if current_time >= 60*60:
+            current_time_string = current_qtime.toString("hh:mm:ss")
+        else:
+            current_time_string = current_qtime.toString("mm:ss")
+        if total_time >= 60*60:
+            total_time_string = total_qtime.toString("hh:mm:ss")
+        else:
+            total_time_string = total_qtime.toString("mm:ss")
         self.time_label.setText(f"{current_time_string} / {total_time_string}")
+
+        if current_time == total_time:
+            self.playButton.setIcon(QIcon("assets/replay.png"))
+            # self.media_player.pause()
+
+    def store_url(self, dictData, filename):
+        print("store url function")
+        listData = []
+        conflict = False
+        try:
+            with open("data/" + filename + "_data.json", "r") as file:
+                lastId = 0
+                try:
+                    listData = json.load(file)
+                    print(listData)
+                    for data in listData:
+                        print(data["id"])
+                        if(data["url"] == dictData["url"]):
+                            data["last_saw"] = self.media_player.get_current_time_string()
+                            conflict = True
+                            break
+                        lastId = data["id"]
+
+                    if not conflict:
+                        dictData["id"] = lastId + 1
+                        listData.append(dictData)
+                except json.decoder.JSONDecodeError as e:
+                    dictData["id"] = lastId + 1
+                    listData.append(dictData)
+                    print("Json decode error: ", e)
+        except FileNotFoundError:
+            dictData["id"] = lastId + 1
+            listData.append(dictData)
+            print("Find not found")
+    
+        try:
+            with open("data/" + filename + "_data.json", "w") as file:
+                json.dump(listData, file)
+        except:
+            QMessageBox.warning(self.parent, "Warning", "Can't store your url to data")
 
 
 def stylesheet(self):
@@ -236,11 +315,11 @@ background-color: none;
 }
 
 QSlider::handle:horizontal {
-background: transparent;
-width: 16px;
-height: 16px;
-margin: -5px 0;
-border-radius: 8px;
+background: #0007ff;
+width: 6px;
+height: 6px;
+margin: -1px 0;
+border-radius: 3px;
 }
 
 QSlider::groove:horizontal {
