@@ -14,7 +14,9 @@ class MyMediaPlayer(QMediaPlayer):
         # self.process = QProcess(self)
         # self.process.readyRead.connect(self.data_ready)
         # self.process.finished.connect(self.play_from_url)
-
+        self.fileDataName = ""
+        self.localFile = ""
+        self.youtubeUrl = ""
         self.myurl = ""
 
     def get_url_from_clip(self, fromSource):
@@ -35,6 +37,8 @@ class MyMediaPlayer(QMediaPlayer):
     def play_from_url(self, isYTUrl = False):
         # self.pause()
         try:
+            self.parent.currentPosition = self.position()
+            self.stop()
             self.setMedia(QMediaContent(QUrl(self.myurl)))
             self.play()
             # Nếu có thể phát thì set lại play button
@@ -44,18 +48,22 @@ class MyMediaPlayer(QMediaPlayer):
         print(self.myurl)
         data = {
                 "id": None,
-                "url": self.myurl,
+                "url": self.youtubeUrl if isYTUrl else self.myurl,
                 "duration": 55555,
+                "position": 0,
                 "saved_at": self.get_current_time_string(),
-                "last_saw": self.get_current_time_string()
+                "last_saw": self.get_current_time_string(),
             }
         if isYTUrl:
             self.parent.store_url(data, "youtube")
+            self.fileDataName = "youtube"
         else:
             self.parent.store_url(data, "http")
+            self.fileDataName = "http"
 
     def get_youtube_url(self):
         try:
+            self.youtubeUrl = self.myurl
             yt = YouTube(self.myurl)
             stream = yt.streams.filter(progressive=True, file_extension='mp4').first()
             self.myurl = stream.url
@@ -65,9 +73,22 @@ class MyMediaPlayer(QMediaPlayer):
             
 
     def load_film(self, file):
+        self.parent.currentPosition = self.position()
+        self.stop()
         self.setMedia(QMediaContent(QUrl.fromLocalFile(file)))
         self.parent.playButton.setEnabled(True)
         self.play()
+        self.myurl = file
+        data = {
+                "id": None,
+                "url": file,
+                "duration": 55555,
+                "position": 0,
+                "saved_at": self.get_current_time_string(),
+                "last_saw": self.get_current_time_string(),
+            }
+        self.parent.store_url(data, "local_file")
+        self.fileDataName = "local_file"
 
     def get_current_time_string(self):
         current_time = datetime.now()

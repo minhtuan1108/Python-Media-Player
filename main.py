@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QCloseEvent, QIcon
 from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtWidgets import QMainWindow, QApplication, QHBoxLayout, QWidget, QVBoxLayout
 
@@ -30,6 +30,9 @@ class MediaPlayer(QMainWindow):
         self.hBoxLayout.addWidget(self.mainFrame)
 
         self.central_widget.setLayout(self.hBoxLayout)
+    
+    def closeEvent(self, a0: QCloseEvent):
+        self.mainFrame.close_window_event(a0)
 
 
 # Press the green button in the gutter to run the script.

@@ -26,14 +26,14 @@ class VideoContent(QGridLayout):
         self.videoWidget = QVideoWidget()
         self.videoWidget.setStyleSheet("border-radius: 20px;")
         self.videoWidget.mousePressEvent = self.play_pause_video
-        # self.videoWidget.mouseDoubleClickEvent = self.fullscreen
+        self.videoWidget.mouseDoubleClickEvent = self.parent.showFullScreen
         self.media_player = MyMediaPlayer(self)
         self.media_player.setVideoOutput(self.videoWidget)
         self.media_player.stateChanged.connect(self.state_change)
         self.media_player.positionChanged.connect(self.position_change)
         self.media_player.durationChanged.connect(self.duration_change)
         self.media_player.error.connect(self.handleError)
-        # self.media_player.play_from_url()
+        self.currentPosition = 0
 
         # Tạo frame để điều chỉnh layout
         self.frame = QFrame()
@@ -190,8 +190,15 @@ class VideoContent(QGridLayout):
     def state_change(self, event):
         if self.media_player.state() == QMediaPlayer.PlayingState:
             self.playButton.setIcon(QIcon("assets/pause.png"))
-        else:
+        elif self.media_player.state() == QMediaPlayer.PausedState:
             self.playButton.setIcon(QIcon("assets/play.png"))
+        elif self.media_player.state() == QMediaPlayer.StoppedState:
+            # print("Video da bi huy: ", self.media_player.myurl)
+            print("Huy o giay thu: ", self.currentPosition)
+            # Store last position video
+            url = self.media_player.youtubeUrl if self.media_player.fileDataName == "youtube" else self.media_player.myurl
+            self.store_video_position(self.media_player.fileDataName, url, self.currentPosition)
+            self.playButton.setIcon(QIcon("assets/replay.png"))
 
     def play_pause_video(self, event):
         # Phát hoặc tạm dừng video
@@ -232,12 +239,14 @@ class VideoContent(QGridLayout):
         self.update_time_label()
 
     def position_change(self, position):
+        # print("In position change")
         self.timeSlider.setValue(position)
         mtime = QTime(0, 0, 0, 0)
         mtime = mtime.addMSecs(self.media_player.position())
         self.update_time_label()
     
     def duration_change(self, duration):
+        # print("In duration change")
         self.timeSlider.setRange(0, duration)
         mtime = QTime(0, 0, 0, 0)
         mtime = mtime.addMSecs(self.media_player.duration())
@@ -265,19 +274,16 @@ class VideoContent(QGridLayout):
             total_time_string = total_qtime.toString("hh:mm:ss")
         else:
             total_time_string = total_qtime.toString("mm:ss")
-        self.time_label.setText(f"{current_time_string} / {total_time_string}")
-
-        if current_time == total_time:
-            self.playButton.setIcon(QIcon("assets/replay.png"))
-            # self.media_player.pause()
+        self.time_label.setText(f"{current_time_string} / {total_time_string}")        
 
     def store_url(self, dictData, filename):
         print("store url function")
         listData = []
         conflict = False
+        lastId = 0
+
         try:
             with open("data/" + filename + "_data.json", "r") as file:
-                lastId = 0
                 try:
                     listData = json.load(file)
                     print(listData)
@@ -307,18 +313,42 @@ class VideoContent(QGridLayout):
         except:
             QMessageBox.warning(self.parent, "Warning", "Can't store your url to data")
 
+    def store_video_position(self, filename, url, position):
+        listData = []
+        try:
+            with open("data/" + filename + "_data.json", "r") as file:
+                listData = json.load(file)
+                for data in listData:
+                    if data["url"] == url:
+                        print("Hello")
+                        data["position"] = position
+                        break
+        except Exception as e:
+            print("Store last video position error: ", e)
+
+        try:
+            with open("data/" + filename + "_data.json", "w") as file:
+                json.dump(listData, file)
+        except:
+            print("Can't update position time")
+
+
+
+
 
 def stylesheet(self):
     return """
 QSlider{
 background-color: none;
+padding: 0px;
 }
 
 QSlider::handle:horizontal {
-background: #0007ff;
+background: none;
 width: 6px;
 height: 6px;
-margin: -1px 0;
+margin: 0px 0;
+padding: 0px;
 border-radius: 3px;
 }
 
@@ -326,6 +356,7 @@ QSlider::groove:horizontal {
 border: none;
 height: 6px;
 margin: 0px;
+padding: 0px;
 border-radius: 3px;
 background: #9a9a9a
 }
@@ -334,6 +365,7 @@ QSlider::sub-page:horizontal {
 height: 6px;
 border-radius: 3px;
 margin: 0px 0;
+padding: 0px;
 background: #0007ff;
 }
 
@@ -341,7 +373,8 @@ QSlider::handle:hover{
 background: white;
 width: 16px;
 height: 16px;
-margin: -5px 0;
+margin: -5px 0px;
+padding: 0px;
 border-radius: 8px;
 }
 
