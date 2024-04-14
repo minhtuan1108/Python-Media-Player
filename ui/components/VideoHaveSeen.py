@@ -66,9 +66,9 @@ class MyWindow(QMainWindow):
         
         # Lưu trữ trạng thái của các tab
         self.tab_states = [False, False, False]
-        
+        self.selected_url = None
         self.buttons = {}  # Dictionary để lưu trữ các nút theo tab index
-        
+        self.filename ="" #tao value ten json  
         self.tab_changed(0) # Goi chay cung UI khi render UI
     # Xử lý sự kiện khi tab được chọn
     def tab_changed(self, index):
@@ -83,11 +83,14 @@ class MyWindow(QMainWindow):
         
         text = self.tab_bar.tabText(index)
         if text == "Local":
-            self.render_local()   
+            self.render_local()
+            self.filename = "videolocal.json"   
         elif text == "Network":  
             self.render_network()
+            self.filename = "videonetwork.json"
         elif text == "Youtube":
             self.render_youtube()
+            self.filename = "videoyoutube.json"
 
     def render_local(self):
         index = 0
@@ -96,7 +99,7 @@ class MyWindow(QMainWindow):
         with open("videolocal.json","r") as f:
             data = json.load(f)
         
-        for video in data["videos"]:
+        for video in data:
             url = video['url']
             duration = video['duration']
             saved_at = video['saved_at']
@@ -131,7 +134,7 @@ class MyWindow(QMainWindow):
         with open("videonetwork.json","r") as f:
             data = json.load(f)
         
-        for video in data['videos']:
+        for video in data:
             url = video['url']
             duration = video['duration']
             saved_at = video['saved_at']
@@ -162,7 +165,7 @@ class MyWindow(QMainWindow):
         
         with open("videoyoutube.json","r") as f:
             data = json.load(f)
-        for video in data['videos']:
+        for video in data:
             url = video['url']
             duration = video['duration']
             saved_at = video['saved_at']    
@@ -184,7 +187,8 @@ class MyWindow(QMainWindow):
                                     background-color: #d0d0d0; /* Màu nền khi nhấn */
                                 }
                             """)
-            btn_youtube.clicked.connect(self.showPopupMenu)   
+            btn_youtube.clicked.connect(self.showPopupMenu)
+            btn_youtube.setProperty("url",url)   
         self.buttons[index] = btn_youtube
         
 
@@ -207,19 +211,40 @@ class MyWindow(QMainWindow):
         # Thêm các mục vào menu popup
         self.action1 = self.popup_menu.addAction("Phát")
         self.action2 = self.popup_menu.addAction("Xóa")
+        sender = self.sender()
+        self.selected_url = sender.property("url")
         self.action2.triggered.connect(self.actionDelete)
         # Lấy tọa độ của sự kiện chuột và hiển thị menu popup tại vị trí đó
         cursor_pos = QCursor.pos()
         self.popup_menu.exec_(cursor_pos)
         print("menu")
         
+        
     def actionDelete(self):
-        reply = QMessageBox.question(self, 'Xác nhận xóa', 'Bạn có chắc muốn xóa?',QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        # Yêu cầu xác nhận từ người dùng
+        reply = QMessageBox.question(self, 'Thông báo', 'Bạn có chắc muốn xóa?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        
+        # Đọc dữ liệu từ tệp
+        with open(self.filename, "r") as f:
+            data = json.load(f)
+
+        # Gỡ lỗi: In tên tệp và URL đã chọn
+        print(self.filename)
+        print(self.selected_url)
+
+        # Kiểm tra phản hồi của người dùng
         if reply == QMessageBox.Yes:
             print('Đã xóa!')
+            # Lọc ra URL đã chọn
+            new_data = [item for item in data if item.get('url') != self.selected_url]
+
+            # Ghi dữ liệu đã cập nhật vào tệp
+            with open(self.filename, "w") as f:
+                json.dump(new_data, f, indent=4)
             # Thực hiện hành động xóa ở đây
         else:
-            print('Hủy bỏ xóa')        
+            print('Hủy bỏ xóa')
+       
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MyWindow()
