@@ -54,7 +54,7 @@ class MainFrame(QWidget):
             # QApplication.setOverrideCursor(Qt.BlankCursor)
             print("Fullscreen entered")
 
-    def show_fullscreen(self):
+    def show_fullscreen(self, event):
         self.parent.showFullScreen()
     
     def close_fullscreen(self):
@@ -62,6 +62,12 @@ class MainFrame(QWidget):
 
     def quit(self):
         self.videoContent.stop_media_player()
-        self.resume_screensaver()
+        # self.resume_screensaver()
         print("Goodbye ...")
         QApplication.quit()
+    
+    def close_window_event(self, event):
+        print("Close window")
+        self.videoContent.currentPosition = self.videoContent.media_player.position()
+        self.videoContent.media_player.stop()
+        event.accept()
