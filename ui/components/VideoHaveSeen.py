@@ -7,21 +7,17 @@ class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # Tạo một Tab Bar
-        self.tab_bar = QTabBar()
-
-        # Thêm các tab vào Tab Bar
-        self.tab_bar.addTab("Local")
-        self.tab_bar.addTab("Network")
-        self.tab_bar.addTab("Youtube")
-
-        # Khi một tab được chọn, gọi hàm tab_changed
-        self.tab_bar.tabBarClicked.connect(self.tab_changed)
-
         # Thêm Tab Bar vào layout chính
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
-        
+        # Tạo một Tab Bar
+        self.tab_bar = QTabBar()
+        self.tab_bar.addTab("Local")
+        self.tab_bar.addTab("Network")
+        self.tab_bar.addTab("Youtube")
+        self.tab_bar.tabBarClicked.connect(self.tab_changed)
+
+
         # Khung chua tab bar
         self.frame_tab = QFrame()
         self.hbox_layout_tab = QHBoxLayout()
@@ -70,6 +66,8 @@ class MyWindow(QMainWindow):
         self.buttons = {}  # Dictionary để lưu trữ các nút theo tab index
         self.filename ="" #tao value ten json  
         self.tab_changed(0) # Goi chay cung UI khi render UI
+        self.index_saved = 0 
+        
     # Xử lý sự kiện khi tab được chọn
     def tab_changed(self, index):
         
@@ -84,19 +82,23 @@ class MyWindow(QMainWindow):
         text = self.tab_bar.tabText(index)
         if text == "Local":
             self.render_local()
-            self.filename = "videolocal.json"   
+            self.filename = "videolocal.json"
+            self.index_saved = 0   
         elif text == "Network":  
             self.render_network()
             self.filename = "videonetwork.json"
+            self.index_saved = 1   
         elif text == "Youtube":
             self.render_youtube()
             self.filename = "videoyoutube.json"
-
+            self.index_saved = 2   
+            
+    # render giao dien link local
     def render_local(self):
         index = 0
         self.remove_layout()  # Loại bỏ layout cũ (nếu có)
         
-        with open("videolocal.json","r") as f:
+        with open("data/local_file_data.json","r") as f:
             data = json.load(f)
         
         for video in data:
@@ -122,16 +124,17 @@ class MyWindow(QMainWindow):
                                 }
                             ''')         
             self.vbox_layout_list.addWidget(btn_local)
+            btn_local.setProperty("url",url)
             btn_local.clicked.connect(self.showPopupMenu)   
             
         self.buttons[index] = btn_local
-        print("Local layout rendered")
-
+        
+    # render giao dien link network
     def render_network(self):
         index = 1
         self.remove_layout()  # Loại bỏ layout cũ (nếu có)
         
-        with open("videonetwork.json","r") as f:
+        with open("data/http_data.json","r") as f:
             data = json.load(f)
         
         for video in data:
@@ -156,14 +159,15 @@ class MyWindow(QMainWindow):
                                     background-color: #d0d0d0; /* Màu nền khi nhấn */
                                 }
                             """)
+            btn_network.setProperty("url",url)
             btn_network.clicked.connect(self.showPopupMenu)   
         self.buttons[index] = btn_network
-
+    # render giao dien link youtube
     def render_youtube(self):
         index = 2
         self.remove_layout()  # Loại bỏ layout cũ (nếu có)
         
-        with open("videoyoutube.json","r") as f:
+        with open("data/youtube_data.json","r") as f:
             data = json.load(f)
         for video in data:
             url = video['url']
@@ -190,8 +194,6 @@ class MyWindow(QMainWindow):
             btn_youtube.clicked.connect(self.showPopupMenu)
             btn_youtube.setProperty("url",url)   
         self.buttons[index] = btn_youtube
-        
-
     
     # Loại bỏ layout của tab khi không được chọn
     def remove_layout(self):
@@ -216,9 +218,7 @@ class MyWindow(QMainWindow):
         self.action2.triggered.connect(self.actionDelete)
         # Lấy tọa độ của sự kiện chuột và hiển thị menu popup tại vị trí đó
         cursor_pos = QCursor.pos()
-        self.popup_menu.exec_(cursor_pos)
-        print("menu")
-        
+        self.popup_menu.exec_(cursor_pos)       
         
     def actionDelete(self):
         # Yêu cầu xác nhận từ người dùng
@@ -227,10 +227,6 @@ class MyWindow(QMainWindow):
         # Đọc dữ liệu từ tệp
         with open(self.filename, "r") as f:
             data = json.load(f)
-
-        # Gỡ lỗi: In tên tệp và URL đã chọn
-        print(self.filename)
-        print(self.selected_url)
 
         # Kiểm tra phản hồi của người dùng
         if reply == QMessageBox.Yes:
@@ -241,7 +237,10 @@ class MyWindow(QMainWindow):
             # Ghi dữ liệu đã cập nhật vào tệp
             with open(self.filename, "w") as f:
                 json.dump(new_data, f, indent=4)
-            # Thực hiện hành động xóa ở đây
+                
+            # render lai giao dien da xoa
+            index = self.index_saved
+            self.tab_changed(index)
         else:
             print('Hủy bỏ xóa')
        
