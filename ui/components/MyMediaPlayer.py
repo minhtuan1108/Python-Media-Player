@@ -18,6 +18,7 @@ class MyMediaPlayer(QMediaPlayer):
         self.localFile = ""
         self.youtubeUrl = ""
         self.myurl = ""
+        self.title = ""
 
     def get_url_from_clip(self, fromSource):
         self.myurl = self.clip.text()
@@ -44,29 +45,33 @@ class MyMediaPlayer(QMediaPlayer):
             self.play()
             # Nếu có thể phát thì set lại play button
             self.parent.playButton.setEnabled(True)
-        except:
-            QMessageBox.critical(self.parent.parent, 'Error', "Can't load youtube file ! Try again!")
-        print(self.myurl)
-        data = {
+            data = {
                 "id": None,
                 "url": self.youtubeUrl if isYTUrl else self.myurl,
+                "title": self.title,
                 "duration": self.duration(),
                 "position": 0,
                 "saved_at": self.get_current_time_string(),
                 "last_saw": self.get_current_time_string(),
             }
-        if isYTUrl:
-            self.parent.store_url(data, "youtube")
-            self.fileDataName = "youtube"
-        else:
-            self.parent.store_url(data, "http")
-            self.fileDataName = "http"
+        
+            if isYTUrl:
+                self.parent.store_url(data, "youtube")
+                self.fileDataName = "youtube"
+            else:
+                self.parent.store_url(data, "http")
+                self.fileDataName = "http"
+                
+        except:
+            QMessageBox.critical(self.parent.parent, 'Error', "Can't load youtube file ! Try again!")
+        print(self.myurl)
 
     def get_youtube_url(self):
         try:
             self.youtubeUrl = self.myurl
             yt = YouTube(self.myurl)
             stream = yt.streams.filter(progressive=True, file_extension='mp4').first()
+            self.title = yt.title
             self.myurl = stream.url
             self.play_from_url(True)
         except:
@@ -84,6 +89,7 @@ class MyMediaPlayer(QMediaPlayer):
         data = {
                 "id": None,
                 "url": file,
+                "title": self.title,
                 "duration": self.duration(),
                 "position": 0,
                 "saved_at": self.get_current_time_string(),

@@ -4,7 +4,7 @@ from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import *
 
-from ui.components.MediaPlayer import MyMediaPlayer
+from ui.components.MyMediaPlayer import MyMediaPlayer
 from ui.components.InputUrlDialog import InputUrlDialog
 
 import json
