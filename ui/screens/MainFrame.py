@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import *
 from ui.components.VideoContent import VideoContent
 
 
+
 # This frame is use for containing content of screen, stay under of top menu bar
 class MainFrame(QWidget):
     def __init__(self, parent):

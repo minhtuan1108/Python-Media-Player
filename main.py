@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QHBoxLayout, QWidget, QVB
 
 from ui.screens.MainFrame import MainFrame
 from ui.components.NavBar import Nav_Bar
+from ui.components.VideoHaveSeen import VideoHaveSeen
 
 
 # Main container for all screen
@@ -26,6 +27,7 @@ class MediaPlayer(QMainWindow):
 
         # Thêm component cần test vào đây
         self.hBoxLayout.addLayout(Nav_Bar())
+        # self.hBoxLayout.addWidget(VideoHaveSeen())
         self.mainFrame = MainFrame(self)
         self.hBoxLayout.addWidget(self.mainFrame)
 

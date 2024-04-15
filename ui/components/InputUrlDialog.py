@@ -44,12 +44,13 @@ class InputUrlDialog(QDialog):
         url = self.textField.text().rstrip()
         print("Input url: " + url)
         if url != None:
+            self.parent.media_player.myurl = url
             if "youtube.com" in url:
                 self.handle_close()
-                self.parent.media_player.get_url_from_clip('youtube')
+                self.parent.media_player.get_youtube_url()
             elif "http" in url:
                 self.handle_close()
-                self.parent.media_player.get_url_from_clip('http')
+                self.parent.media_player.play_from_url()
             else:
                 # Thông báo lỗi
                 QMessageBox.critical(self, "Error", "Your url invalid format")

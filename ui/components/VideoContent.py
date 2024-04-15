@@ -254,6 +254,7 @@ class VideoContent(QGridLayout):
     def duration_change(self, duration):
         # print("In duration change")
         self.timeSlider.setRange(0, duration)
+        self.currentDuration = duration
         mtime = QTime(0, 0, 0, 0)
         mtime = mtime.addMSecs(self.media_player.duration())
         self.update_time_label()
@@ -268,8 +269,9 @@ class VideoContent(QGridLayout):
 
     def update_time_label(self):
         # Cập nhật label với thời gian hiện tại và thời lượng toàn bộ của video
-        current_time = self.media_player.position() / 1000 # Đổi từ milliseconds thành giây
-        total_time = self.media_player.duration() / 1000 # Đổi từ milliseconds thành giây        
+        current_time = int(self.media_player.position() / 1000) # Đổi từ milliseconds thành giây
+        total_time = int(self.media_player.duration() / 1000) # Đổi từ milliseconds thành giây        
+        print(current_time)
         current_qtime = QTime(0, 0).addSecs(current_time)
         total_qtime = QTime(0, 0).addSecs(total_time)
         if current_time >= 60*60:

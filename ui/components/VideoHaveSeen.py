@@ -1,15 +1,15 @@
 import sys
 import json
 from PyQt5.QtGui import QIcon,QCursor
-from PyQt5.QtCore import Qt,QSize,QPoint
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTabBar,QMessageBox ,QDialog,QVBoxLayout, QLabel,QWidget, QHBoxLayout, QFrame, QPushButton,QScrollArea,QMenu
-class MyWindow(QMainWindow):
+from PyQt5.QtCore import Qt,QSize
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTabBar,QMessageBox ,QVBoxLayout, QLabel,QWidget, QHBoxLayout, QFrame, QPushButton,QScrollArea,QMenu
+class VideoHaveSeen(QFrame):
     def __init__(self):
         super().__init__()
 
         # Thêm Tab Bar vào layout chính
-        self.central_widget = QWidget()
-        self.setCentralWidget(self.central_widget)
+        # self.central_widget = QWidget()
+        # self.setCentralWidget(self.central_widget)
         # Tạo một Tab Bar
         self.tab_bar = QTabBar()
         self.tab_bar.addTab("Local")
@@ -29,12 +29,12 @@ class MyWindow(QMainWindow):
         
         # Khung chua danh sach Qhbox layout
         self.frame = QFrame()
-        self.frame.setFixedSize(800,650)
         self.frame.setStyleSheet("""
                                  border-radius: 20%;
                                  background-color: white;
                                  """)
         self.frame_layout = QFrame()
+        self.frame_layout.setMouseTracking(True)
         self.vbox_layout = QVBoxLayout()
         
         # khung chua Button
@@ -56,9 +56,9 @@ class MyWindow(QMainWindow):
         self.layout.addWidget(self.frame_tab)
         self.layout.setSpacing(0)
         self.layout.addWidget(self.frame)
-        self.central_widget.setLayout(self.layout)
+        # self.central_widget.setLayout(self.layout)
         #  tao label
-        self.label = QLabel("Bạn có chắc chắn muốn xóa không?")
+        self.label = QLabel()
         
         # Lưu trữ trạng thái của các tab
         self.tab_states = [False, False, False]
@@ -82,15 +82,15 @@ class MyWindow(QMainWindow):
         text = self.tab_bar.tabText(index)
         if text == "Local":
             self.render_local()
-            self.filename = "videolocal.json"
+            self.filename = "data/local_file_data.json"
             self.index_saved = 0   
         elif text == "Network":  
             self.render_network()
-            self.filename = "videonetwork.json"
+            self.filename = "data/http_data.json"
             self.index_saved = 1   
         elif text == "Youtube":
             self.render_youtube()
-            self.filename = "videoyoutube.json"
+            self.filename = "data/youtube_data.json"
             self.index_saved = 2   
             
     # render giao dien link local
@@ -98,21 +98,30 @@ class MyWindow(QMainWindow):
         index = 0
         self.remove_layout()  # Loại bỏ layout cũ (nếu có)
         
-        with open("data/local_file_data.json","r") as f:
-            data = json.load(f)
+        # doc file
+        try:   
+            with open("data/local_file_data.json","r") as f:
+                data = json.load(f)
+            print("file ton tai")
+        except Exception as e:
+            print("file khong ton tai", e)
         
         for video in data:
             url = video['url']
             duration = video['duration']
             saved_at = video['saved_at']
-            btn_local = QPushButton(f"{url}\n{duration}, {saved_at}")
+            btn_local = QPushButton()
+            btn_local.setText(f"{self.shorten_url(url, 50)}\nDuration: {self.changed_time(duration)}\nSaved_at: {saved_at}")
+            btn_local.setToolTip(f"{url}")
             btn_local.setIcon(QIcon('./assets/local.png'))
             btn_local.setIconSize(QSize(50, 50))  # Đặt kích thước của biểu tượng
+            btn_local.setFixedWidth(400)
             btn_local.setStyleSheet('''
                                 QPushButton {
                                     background-color: #f0f0f0; /* Màu nền */
                                     padding: 10px; /* Khoảng cách nội dung và viền */
                                     font-size: 16px; /* Kích thước font chữ */
+                                    text-align:left;
                                     font-family: "Times New Roman";
                                     padding-right: 10px;
                                 }   
@@ -134,23 +143,34 @@ class MyWindow(QMainWindow):
         index = 1
         self.remove_layout()  # Loại bỏ layout cũ (nếu có)
         
-        with open("data/http_data.json","r") as f:
-            data = json.load(f)
-        
+        # doc file
+        try:   
+            with open("data/http_data.json","r") as f:
+                data = json.load(f)
+            print("file ton tai")
+        except Exception as e:
+            print("file khong ton tai", e)
+            
         for video in data:
             url = video['url']
             duration = video['duration']
             saved_at = video['saved_at']
-            btn_network = QPushButton(f"{url}\n{duration}, {saved_at}")
+
+            btn_network = QPushButton()
+            btn_network.setText(f"{self.shorten_url(url, 50)}\nDuration: {self.changed_time(duration)}\nSaved_at: {saved_at}")
+            btn_network.setToolTip(f"{url}")
             btn_network.setIcon(QIcon('./assets/netword.png'))
-            btn_network.setIconSize(QSize(50, 50))  
+            btn_network.setIconSize(QSize(50, 50))
+            btn_network.setFixedWidth(400)
             self.vbox_layout_list.addWidget(btn_network)
             btn_network.setStyleSheet("""
                                 QPushButton {
                                     background-color: #f0f0f0; /* Màu nền */
                                     padding: 10px; /* Khoảng cách nội dung và viền */
                                     font-size: 16px; /* Kích thước font chữ */
+                                    text-align:left;
                                     font-family: "Times New Roman";
+                                    
                                 }
                                 QPushButton:hover {
                                     background-color: #e0e0e0; /* Màu nền khi di chuột qua */
@@ -167,21 +187,31 @@ class MyWindow(QMainWindow):
         index = 2
         self.remove_layout()  # Loại bỏ layout cũ (nếu có)
         
-        with open("data/youtube_data.json","r") as f:
-            data = json.load(f)
+        # doc file
+        try:   
+            with open("data/youtube_data.json","r") as f:
+                data = json.load(f)
+            print("file ton tai")
+        except Exception as e:
+            print("file khong ton tai", e)
+            
         for video in data:
             url = video['url']
             duration = video['duration']
             saved_at = video['saved_at']    
-            btn_youtube = QPushButton(f"{url}\n{duration}, {saved_at}")
+            btn_youtube = QPushButton()
+            btn_youtube.setText(f"{self.shorten_url(url, 50)}\nDuration: {self.changed_time(duration)}\nSaved_at: {saved_at}")
+            btn_youtube.setToolTip(f"{url}")
             btn_youtube.setIcon(QIcon('./assets/youtube.png'))
             btn_youtube.setIconSize(QSize(50, 50))
+            btn_youtube.setFixedWidth(400)
             self.vbox_layout_list.addWidget(btn_youtube)
             btn_youtube.setStyleSheet("""
                                 QPushButton {
                                     background-color: #f0f0f0; /* Màu nền */
                                     padding: 10px; /* Khoảng cách nội dung và viền */
                                     font-size: 16px; /* Kích thước font chữ */
+                                    text-align:left;
                                     font-family: "Times New Roman";
                                 }
                                 QPushButton:hover {
@@ -227,25 +257,43 @@ class MyWindow(QMainWindow):
         # Đọc dữ liệu từ tệp
         with open(self.filename, "r") as f:
             data = json.load(f)
-
+        
+        print(self.selected_url)
+        
         # Kiểm tra phản hồi của người dùng
         if reply == QMessageBox.Yes:
             print('Đã xóa!')
             # Lọc ra URL đã chọn
-            new_data = [item for item in data if item.get('url') != self.selected_url]
-
+            new_data = [item for item in data if item.get("url") != self.selected_url]
+            print(new_data)
             # Ghi dữ liệu đã cập nhật vào tệp
-            with open(self.filename, "w") as f:
-                json.dump(new_data, f, indent=4)
-                
+            try:
+                with open(self.filename, "w") as f:
+                    json.dump(new_data, f, indent=6)
+                print("Dữ liệu đã được ghi vào tệp thành công.")
+            except Exception as e:
+                print("Có lỗi xảy ra khi ghi dữ liệu vào tệp:", e)
+
             # render lai giao dien da xoa
             index = self.index_saved
             self.tab_changed(index)
         else:
             print('Hủy bỏ xóa')
-       
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = MyWindow()
-    window.show()
-    sys.exit(app.exec_())
+            print(self.selected_url)
+    # rut gon url
+    def shorten_url(self ,url, max_length):
+        if len(url) <= max_length:
+            return url
+        else:
+            return url[:max_length-3] + "..."
+    # chuyen thoi gian 
+    def changed_time(self, duration):
+        seconds = duration // 1000
+        minutes = seconds // 60
+        remaining_seconds = seconds % 60
+        return f"{minutes}:{remaining_seconds:02d}"
+# if __name__ == "__main__":
+#     app = QApplication(sys.argv)
+#     window = MyWindow()
+#     window.show()
+#     sys.exit(app.exec_())
