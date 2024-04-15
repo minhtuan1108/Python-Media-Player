@@ -4,7 +4,7 @@ from PyQt5.QtGui import QCloseEvent, QIcon
 from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtWidgets import QMainWindow, QApplication, QHBoxLayout, QWidget, QVBoxLayout
 
-from ui.components.MainFrame import MainFrame
+from ui.screens.MainFrame import MainFrame
 from ui.components.NavBar import Nav_Bar
 
 
