@@ -8,7 +8,8 @@ class InputUrlDialog(QDialog):
         super().__init__()
         self.parent = parent
         self.setWindowTitle("Input Dialog")
-        # self.setGeometry()
+        print("Input dialog: ", parent.parent.geometry().center())
+        # self.exec_(parent.parent.mapToGlobal(parent.parent.geometry().center()))
 
         # Tao layout
         layout = QGridLayout()

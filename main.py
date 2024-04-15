@@ -12,7 +12,6 @@ from ui.components.NavBar import Nav_Bar
 class MediaPlayer(QMainWindow):
     def __init__(self):
         super().__init__()
-
         # Tạo widget để chứa các thành phần bên trong
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
@@ -30,6 +29,10 @@ class MediaPlayer(QMainWindow):
         self.hBoxLayout.addWidget(self.mainFrame)
 
         self.central_widget.setLayout(self.hBoxLayout)
+
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested[QPoint].connect(self.mainFrame.context_menu_requested)
+
     
     def closeEvent(self, a0: QCloseEvent):
         self.mainFrame.close_window_event(a0)
@@ -42,7 +45,5 @@ if __name__ == '__main__':
     window.setWindowTitle('Python Media Player')
     window.setWindowIcon(QIcon('assets/logo.png'))
     window.setGeometry(300, 300, 600, 400)
-    window.setContextMenuPolicy(Qt.CustomContextMenu)
-    window.customContextMenuRequested[QPoint].connect(window.mainFrame.context_menu_requested)
     window.show()
     sys.exit(app.exec_())
