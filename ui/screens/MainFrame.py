@@ -69,5 +69,6 @@ class MainFrame(QWidget):
     def close_window_event(self, event):
         print("Close window")
         self.videoContent.currentPosition = self.videoContent.media_player.position()
+        self.videoContent.currentDuration = self.videoContent.media_player.duration()
         self.videoContent.media_player.stop()
         event.accept()

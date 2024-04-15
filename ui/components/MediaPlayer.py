@@ -38,6 +38,7 @@ class MyMediaPlayer(QMediaPlayer):
         # self.pause()
         try:
             self.parent.currentPosition = self.position()
+            self.parent.currentPosition = self.duration()
             self.stop()
             self.setMedia(QMediaContent(QUrl(self.myurl)))
             self.play()
@@ -49,7 +50,7 @@ class MyMediaPlayer(QMediaPlayer):
         data = {
                 "id": None,
                 "url": self.youtubeUrl if isYTUrl else self.myurl,
-                "duration": 55555,
+                "duration": self.duration(),
                 "position": 0,
                 "saved_at": self.get_current_time_string(),
                 "last_saw": self.get_current_time_string(),
@@ -74,6 +75,7 @@ class MyMediaPlayer(QMediaPlayer):
 
     def load_film(self, file):
         self.parent.currentPosition = self.position()
+        self.parent.currentPosition = self.duration()
         self.stop()
         self.setMedia(QMediaContent(QUrl.fromLocalFile(file)))
         self.parent.playButton.setEnabled(True)
@@ -82,7 +84,7 @@ class MyMediaPlayer(QMediaPlayer):
         data = {
                 "id": None,
                 "url": file,
-                "duration": 55555,
+                "duration": self.duration(),
                 "position": 0,
                 "saved_at": self.get_current_time_string(),
                 "last_saw": self.get_current_time_string(),

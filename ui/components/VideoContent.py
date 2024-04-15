@@ -34,6 +34,7 @@ class VideoContent(QGridLayout):
         self.media_player.durationChanged.connect(self.duration_change)
         self.media_player.error.connect(self.handleError)
         self.currentPosition = 0
+        self.currentDuration = 0
 
         # Tạo frame để điều chỉnh layout
         self.frame = QFrame()
@@ -120,6 +121,7 @@ class VideoContent(QGridLayout):
         self.soundFixedFrame.setMaximumWidth(150)
         self.soundFixedFrame.enterEvent = self.speaker_enter_event
         self.soundFixedFrame.leaveEvent = self.speaker_leave_event
+        self.soundFixedFrame.setStyleSheet("background-color: none;")
 
         # Tao layout fix de chua
         self.soundFixedBox = QHBoxLayout()
@@ -178,8 +180,7 @@ class VideoContent(QGridLayout):
         self.frame.hide()
 
     def handle_mouse_in_frame(self, event):
-        print(event.x())
-        print(event.y())
+        pass
 
     def load_film(self, file):
         self.media_player.load_film(file)
@@ -195,9 +196,10 @@ class VideoContent(QGridLayout):
         elif self.media_player.state() == QMediaPlayer.StoppedState:
             # print("Video da bi huy: ", self.media_player.myurl)
             print("Huy o giay thu: ", self.currentPosition)
+            print("Duration hien tai: ", self.currentDuration)
             # Store last position video
             url = self.media_player.youtubeUrl if self.media_player.fileDataName == "youtube" else self.media_player.myurl
-            self.store_video_position(self.media_player.fileDataName, url, self.currentPosition)
+            self.update_url(self.media_player.fileDataName, url, self.currentPosition, self.currentDuration)
             self.playButton.setIcon(QIcon("assets/replay.png"))
 
     def play_pause_video(self, event):
@@ -229,7 +231,11 @@ class VideoContent(QGridLayout):
             self.media_player.setVolume(self.currentVolume)
         
     def play_forward_10(self):
-        self.media_player.setPosition(self.media_player.position() + 10000)
+        duration = self.media_player.duration()
+        if self.media_player.position() + 10000 > duration:
+            self.media_player.setPosition(duration - 1)
+        else:
+            self.media_player.setPosition(self.media_player.position() + 10000)
 
     def play_back_10(self):
         self.media_player.setPosition(self.media_player.position() - 10000)
@@ -313,7 +319,7 @@ class VideoContent(QGridLayout):
         except:
             QMessageBox.warning(self.parent, "Warning", "Can't store your url to data")
 
-    def store_video_position(self, filename, url, position):
+    def update_url(self, filename, url, position, duration):
         listData = []
         try:
             with open("data/" + filename + "_data.json", "r") as file:
@@ -322,6 +328,7 @@ class VideoContent(QGridLayout):
                     if data["url"] == url:
                         print("Hello")
                         data["position"] = position
+                        data["duration"] = duration
                         break
         except Exception as e:
             print("Store last video position error: ", e)
