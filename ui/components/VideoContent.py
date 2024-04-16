@@ -10,7 +10,7 @@ from ui.components.InputUrlDialog import InputUrlDialog
 import json
 
 
-class VideoContent(QGridLayout):
+class VideoContent(QFrame):
     def __init__(self, parent: QFrame):
         super().__init__()
         self.setContentsMargins(0, 0, 0, 0)
@@ -77,7 +77,7 @@ class VideoContent(QGridLayout):
 
         # Tao label dem thoi gian
         self.time_label = QLabel()
-        self.time_label.setStyleSheet("background-color: none;")
+        self.time_label.setStyleSheet("background-color: none;color: white;")
 
         # Tạo layout chưa cac nút bên trên
         self.playVideoBox = QHBoxLayout()
@@ -145,8 +145,12 @@ class VideoContent(QGridLayout):
         self.containerBox.addWidget(self.timeSlider)
         self.containerBox.addLayout(self.containButtonsBox)
 
-        self.addWidget(self.videoWidget, 0, 0)
-        self.addWidget(self.frame, 0, 0, Qt.AlignBottom)
+        self.grid_layout = QGridLayout()
+        self.grid_layout.addWidget(self.videoWidget, 0, 0)
+        self.grid_layout.addWidget(self.frame, 0, 0, Qt.AlignBottom)
+        
+        self.setLayout(self.grid_layout)
+        self.frames = {}
 
     def add_item_context_menu(self):
         actionFile = self.parent.menu.addAction(QIcon.fromTheme("video-x-generic"), "open File (o)")

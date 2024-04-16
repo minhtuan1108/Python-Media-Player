@@ -1,14 +1,16 @@
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon
+# from ui.components.VideoContent import VideoContent
+# from ui.components.VideoHaveSeen import VideoHaveSeen
+from ui.screens.MainFrame import MainFrame
 class Nav_Bar(QHBoxLayout):
     def __init__(self):
         super().__init__()
         self.hbox_layout = QHBoxLayout() # hbox lớn được bọc bởi frame
         self.hbox_layouts = QHBoxLayout()   # hbox nhỏ được bọc bởi frame_layout
-        
         self.hbox_layout.setAlignment(Qt.AlignCenter)
-    
+        self.mainFrame = MainFrame(self)
         self.frame = QFrame() # frame lớn bọc hbox_layout
         self.frame_layout = QFrame() # frame_layout nhỏ bọc hbox_layouts
 
@@ -42,17 +44,17 @@ class Nav_Bar(QHBoxLayout):
         # Create and style buttons
         self.button1 = QPushButton("Library")
         self.button1.setIcon(QIcon('./assets/library.png'))
-        self.button1.clicked.connect(self.on_click_btn1)
         self.button1.setFixedSize(145, 40)
+        self.button1.clicked.connect(lambda state, text = "Library": self.mainFrame.on_click_btn(text))
 
         self.button2 = QPushButton("Now Playing")
         self.button2.setIcon(QIcon('./assets/nowplaying.png'))
-        self.button2.clicked.connect(self.on_click_btn2)
+        self.button2.clicked.connect(lambda state, text = "Now Playing": self.mainFrame.on_click_btn(text))
         self.button2.setFixedSize(145, 40)
 
         self.button3 = QPushButton("Playlist")
         self.button3.setIcon(QIcon('./assets/playlist.png'))
-        self.button3.clicked.connect(self.on_click_btn3)
+        # self.button3.clicked.connect(self.on_click_btn)
         self.button3.setFixedSize(145, 40)
         
         # set style for button
@@ -65,21 +67,20 @@ class Nav_Bar(QHBoxLayout):
         
         
         # Connect button clicks to transitions
-        self.button1.clicked.connect(self.on_button_clicked)
-        self.button2.clicked.connect(self.on_button_clicked)
-        self.button3.clicked.connect(self.on_button_clicked)
+        # self.button1.clicked.connect(self.on_button_clicked)
+        # self.button2.clicked.connect(self.on_button_clicked)
+        # self.button3.clicked.connect(self.on_button_clicked)
         
         
         # Add buttons to the horizontal layout
         self.hbox_layouts.addWidget(self.button1)
         self.hbox_layouts.addWidget(self.button2)
         self.hbox_layouts.addWidget(self.button3)
-
+        
         
     def on_button_clicked(self):
         sender=  self.sender()
         text = sender.text()
-        print(text)
         if text == "Library":
             self.button1.setStyleSheet(self.active_button_style)
             self.button2.setStyleSheet(self.default_style)
@@ -93,15 +94,5 @@ class Nav_Bar(QHBoxLayout):
             self.button2.setStyleSheet(self.default_style)
             self.button3.setStyleSheet(self.active_button_style)
         
-        
-    def on_click_btn1(self):
-    # Hiển thị giao diện 1
-        print("Giao diện 1 được chọn")
-
-    def on_click_btn2(self):
-        # Hiển thị giao diện 2
-        print("Giao diện 2 được chọn")
-
-    def on_click_btn3(self):
-        # Hiển thị giao diện 3
-        print("Giao diện 3 được chọn")
+    
+    

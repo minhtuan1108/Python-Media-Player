@@ -2,14 +2,10 @@ import sys
 import json
 from PyQt5.QtGui import QIcon,QCursor
 from PyQt5.QtCore import Qt,QSize
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTabBar,QMessageBox ,QVBoxLayout, QLabel,QWidget, QHBoxLayout, QFrame, QPushButton,QScrollArea,QMenu
+from PyQt5.QtWidgets import QGridLayout, QTabBar,QMessageBox ,QVBoxLayout, QLabel,QWidget, QHBoxLayout, QFrame, QPushButton,QScrollArea,QMenu
 class VideoHaveSeen(QFrame):
     def __init__(self):
         super().__init__()
-
-        # Thêm Tab Bar vào layout chính
-        # self.central_widget = QWidget()
-        # self.setCentralWidget(self.central_widget)
         # Tạo một Tab Bar
         self.tab_bar = QTabBar()
         self.tab_bar.addTab("Local")
@@ -52,10 +48,11 @@ class VideoHaveSeen(QFrame):
         
         self.vbox_layout_list.setAlignment(Qt.AlignTop | Qt.AlignLeft)
         
-        self.layout = QVBoxLayout()
-        self.layout.addWidget(self.frame_tab)
-        self.layout.setSpacing(0)
-        self.layout.addWidget(self.frame)
+        self.vbox = QVBoxLayout()
+        self.vbox.addWidget(self.frame_tab)
+        self.vbox.setSpacing(0)
+        self.vbox.addWidget(self.frame)
+        self.setLayout(self.vbox)
         # self.central_widget.setLayout(self.layout)
         #  tao label
         self.label = QLabel()
@@ -292,8 +289,3 @@ class VideoHaveSeen(QFrame):
         minutes = seconds // 60
         remaining_seconds = seconds % 60
         return f"{minutes}:{remaining_seconds:02d}"
-# if __name__ == "__main__":
-#     app = QApplication(sys.argv)
-#     window = MyWindow()
-#     window.show()
-#     sys.exit(app.exec_())

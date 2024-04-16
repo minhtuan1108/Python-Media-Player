@@ -2,6 +2,8 @@ from PyQt5.QtGui import QKeySequence, QIcon
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from ui.components.VideoContent import VideoContent
+from ui.components.VideoHaveSeen import VideoHaveSeen
+
 
 
 
@@ -11,9 +13,20 @@ class MainFrame(QWidget):
         super().__init__()
         self.parent = parent
         self.setStyleSheet("background-color: #FFFFFF; border-radius: 10px;")
+        self.box_layout = QStackedLayout()
+        self.setLayout(self.box_layout)
+        
         self.videoContent = VideoContent(self)
+        self.videoContent.hide()
+        self.videoHaveSeen = VideoHaveSeen()
         self.videoContent.inputDialog.move(self.frameGeometry().center())
-        self.setLayout(self.videoContent.layout())
+        
+        self.box_layout.addWidget(self.videoContent)
+        self.box_layout.addWidget(self.videoHaveSeen)
+        
+        # self.setLayout(self.videoContent.layout())
+        # self.setLayout(self.videoHaveSeen.layout())
+        
         self.menu = QMenu()
         self.menu.setStyleSheet(self.styleSheet())
         self.myinfo = "©2016\nAxel Schneider\n\nMouse Wheel = Zoom\nUP = Volume Up\nDOWN = Volume Down\n" + \
@@ -76,7 +89,22 @@ class MainFrame(QWidget):
         self.videoContent.currentDuration = self.videoContent.media_player.duration()
         self.videoContent.media_player.stop()
         event.accept()
-
+        
+    def on_click_btn(self,text):
+        
+        index = self.box_layout.currentIndex()
+        print(index)
+        self.box_layout.setCurrentIndex((index + 1) % 2)
+        # self.videoHaveSeen.hide()
+        # self.videoContent.show()
+        # if text == "Library":
+            
+        #     self.box_layout.addWidget(self.videoHaveSeen)
+        #     print(text)
+        # elif text == "Now Playing":
+        #     self.box_layout.addWidget(self.videoContent)
+        #     print(text)
+      
     def styleSheet(self):
         return """
             QMenu {
