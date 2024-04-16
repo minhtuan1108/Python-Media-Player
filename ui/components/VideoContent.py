@@ -150,7 +150,7 @@ class VideoContent(QFrame):
         self.grid_layout.addWidget(self.frame, 0, 0, Qt.AlignBottom)
         
         self.setLayout(self.grid_layout)
-        self.frames = {}
+        
 
     def add_item_context_menu(self):
         actionFile = self.parent.menu.addAction(QIcon.fromTheme("video-x-generic"), "open File (o)")

@@ -13,19 +13,16 @@ class MainFrame(QWidget):
         super().__init__()
         self.parent = parent
         self.setStyleSheet("background-color: #FFFFFF; border-radius: 10px;")
-        self.box_layout = QStackedLayout()
-        self.setLayout(self.box_layout)
+        # self.box_layout = QVBoxLayout
+        # self.setLayout(self.box_layout)
         
         self.videoContent = VideoContent(self)
-        self.videoContent.hide()
         self.videoHaveSeen = VideoHaveSeen()
         self.videoContent.inputDialog.move(self.frameGeometry().center())
         
-        self.box_layout.addWidget(self.videoContent)
-        self.box_layout.addWidget(self.videoHaveSeen)
-        
-        # self.setLayout(self.videoContent.layout())
-        # self.setLayout(self.videoHaveSeen.layout())
+        # self.box_layout.addWidget(self.videoContent)
+        # self.box_layout.addWidget(self.videoHaveSeen)
+        self.setLayout(self.videoContent.layout())
         
         self.menu = QMenu()
         self.menu.setStyleSheet(self.styleSheet())
@@ -91,20 +88,15 @@ class MainFrame(QWidget):
         event.accept()
         
     def on_click_btn(self,text):
-        
-        index = self.box_layout.currentIndex()
-        print(index)
-        self.box_layout.setCurrentIndex((index + 1) % 2)
-        # self.videoHaveSeen.hide()
-        # self.videoContent.show()
-        # if text == "Library":
-            
-        #     self.box_layout.addWidget(self.videoHaveSeen)
-        #     print(text)
-        # elif text == "Now Playing":
-        #     self.box_layout.addWidget(self.videoContent)
-        #     print(text)
-      
+        if text == "Library":
+            # self.videoContent.setVisible(False)
+            self.videoHaveSeen.setVisible(True)
+            print(text)
+        elif text == "Now Playing":
+            # self.videoHaveSeen.setVisible(False)
+            self.videoContent.setVisible(True)
+            print(text)
+     
     def styleSheet(self):
         return """
             QMenu {

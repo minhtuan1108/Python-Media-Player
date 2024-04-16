@@ -67,9 +67,9 @@ class Nav_Bar(QHBoxLayout):
         
         
         # Connect button clicks to transitions
-        # self.button1.clicked.connect(self.on_button_clicked)
-        # self.button2.clicked.connect(self.on_button_clicked)
-        # self.button3.clicked.connect(self.on_button_clicked)
+        self.button1.clicked.connect(self.on_button_clicked)
+        self.button2.clicked.connect(self.on_button_clicked)
+        self.button3.clicked.connect(self.on_button_clicked)
         
         
         # Add buttons to the horizontal layout
