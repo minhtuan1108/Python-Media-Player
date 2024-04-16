@@ -88,11 +88,11 @@ class MainFrame(QFrame):
     def on_click_btn(self, text):
         print(text)
         if text == "Library":
-            self.videoHaveSeen.hide()
-            self.videoContent.show()
-        elif text == "Now Playing":
             self.videoContent.hide()
             self.videoHaveSeen.show()
+        elif text == "Now Playing":
+            self.videoHaveSeen.hide()
+            self.videoContent.show()
 
     def styleSheet(self):
         return """
