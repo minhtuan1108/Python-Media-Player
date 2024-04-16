@@ -23,7 +23,6 @@ class MainFrame(QFrame):
         # self.videoHaveSeen.setVisible(False)
         self.setLayout(self.layout)
         self.videoContent.inputDialog.move(self.frameGeometry().center())
-
         self.menu = QMenu()
         self.menu.setStyleSheet(self.styleSheet())
         self.myinfo = "©2016\nAxel Schneider\n\nMouse Wheel = Zoom\nUP = Volume Up\nDOWN = Volume Down\n" + \
