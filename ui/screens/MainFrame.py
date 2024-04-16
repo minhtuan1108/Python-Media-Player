@@ -5,34 +5,30 @@ from ui.components.VideoContent import VideoContent
 from ui.components.VideoHaveSeen import VideoHaveSeen
 
 
-
-
 # This frame is use for containing content of screen, stay under of top menu bar
-class MainFrame(QWidget):
+class MainFrame(QFrame):
     def __init__(self, parent):
         super().__init__()
         self.parent = parent
         self.setStyleSheet("background-color: #FFFFFF; border-radius: 10px;")
-        self.box_layout = QStackedLayout()
-        self.setLayout(self.box_layout)
-        
+
+        # Khởi tạo các thành phần của MainFrame
         self.videoContent = VideoContent(self)
-        self.videoContent.hide()
         self.videoHaveSeen = VideoHaveSeen()
+
+        # Thêm VideoHaveSeen vào layout của MainFrame và ẩn nó ban đầu
+        self.layout = QGridLayout()
+        self.layout.addWidget(self.videoContent, 0, 0)
+        self.layout.addWidget(self.videoHaveSeen, 0, 0, Qt.AlignBottom)
+        # self.videoHaveSeen.setVisible(False)
+        self.setLayout(self.layout)
         self.videoContent.inputDialog.move(self.frameGeometry().center())
-        
-        self.box_layout.addWidget(self.videoContent)
-        self.box_layout.addWidget(self.videoHaveSeen)
-        
-        # self.setLayout(self.videoContent.layout())
-        # self.setLayout(self.videoHaveSeen.layout())
-        
+
         self.menu = QMenu()
         self.menu.setStyleSheet(self.styleSheet())
         self.myinfo = "©2016\nAxel Schneider\n\nMouse Wheel = Zoom\nUP = Volume Up\nDOWN = Volume Down\n" + \
                       "LEFT = < 1 Minute\nRIGHT = > 1 Minute\n" + \
                       "SHIFT+LEFT = < 10 Minutes\nSHIFT+RIGHT = > 10 Minutes"
-
 
     def context_menu_requested(self, point):
         self.menu.clear()
@@ -73,7 +69,7 @@ class MainFrame(QWidget):
 
     def show_fullscreen(self):
         self.parent.showFullScreen()
-    
+
     def close_fullscreen(self):
         self.parent.showNormal()
 
@@ -82,29 +78,23 @@ class MainFrame(QWidget):
         # self.resume_screensaver()
         print("Goodbye ...")
         QApplication.quit()
-    
+
     def close_window_event(self, event):
         print("Close window")
         self.videoContent.currentPosition = self.videoContent.media_player.position()
         self.videoContent.currentDuration = self.videoContent.media_player.duration()
         self.videoContent.media_player.stop()
         event.accept()
-        
-    def on_click_btn(self,text):
-        
-        index = self.box_layout.currentIndex()
-        print(index)
-        self.box_layout.setCurrentIndex((index + 1) % 2)
-        # self.videoHaveSeen.hide()
-        # self.videoContent.show()
-        # if text == "Library":
-            
-        #     self.box_layout.addWidget(self.videoHaveSeen)
-        #     print(text)
-        # elif text == "Now Playing":
-        #     self.box_layout.addWidget(self.videoContent)
-        #     print(text)
-      
+
+    def on_click_btn(self, text):
+        print(text)
+        if text == "Library":
+            self.videoHaveSeen.hide()
+            self.videoContent.show()
+        elif text == "Now Playing":
+            self.videoContent.hide()
+            self.videoHaveSeen.show()
+
     def styleSheet(self):
         return """
             QMenu {

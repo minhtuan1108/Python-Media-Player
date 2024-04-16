@@ -2,7 +2,8 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QFrame, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QSlider, QComboBox, QGridLayout, \
+    QMessageBox
 
 from ui.components.MyMediaPlayer import MyMediaPlayer
 from ui.components.InputUrlDialog import InputUrlDialog
@@ -11,7 +12,7 @@ import json
 
 
 class VideoContent(QFrame):
-    def __init__(self, parent: QFrame):
+    def __init__(self, parent = None):
         super().__init__()
         self.setContentsMargins(0, 0, 0, 0)
         self.parent = parent
@@ -148,9 +149,8 @@ class VideoContent(QFrame):
         self.grid_layout = QGridLayout()
         self.grid_layout.addWidget(self.videoWidget, 0, 0)
         self.grid_layout.addWidget(self.frame, 0, 0, Qt.AlignBottom)
-        
+
         self.setLayout(self.grid_layout)
-        self.frames = {}
 
     def add_item_context_menu(self):
         actionFile = self.parent.menu.addAction(QIcon.fromTheme("video-x-generic"), "open File (o)")
@@ -177,6 +177,7 @@ class VideoContent(QFrame):
 
     def frame_enter_event(self, event):
         # Hiển thị nút khi di chuyển chuột vào frame
+        print("In enter event")
         self.frame.show()
 
     def frame_leave_event(self, event):

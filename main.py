@@ -24,9 +24,10 @@ class MediaPlayer(QMainWindow):
         self.hBoxLayout.setContentsMargins(10, 0, 10, 10)
 
         # Thêm component cần test vào đây
-        self.navBar = Nav_Bar()
-        self.hBoxLayout.addLayout(self.navBar)
         self.mainFrame = MainFrame(self)
+        self.navBar = Nav_Bar(self)
+
+        self.hBoxLayout.addLayout(self.navBar)
         self.hBoxLayout.addWidget(self.mainFrame)
 
         self.central_widget.setLayout(self.hBoxLayout)
@@ -34,7 +35,6 @@ class MediaPlayer(QMainWindow):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested[QPoint].connect(self.mainFrame.context_menu_requested)
 
-    
     def closeEvent(self, a0: QCloseEvent):
         self.mainFrame.close_window_event(a0)
 
