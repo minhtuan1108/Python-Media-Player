@@ -190,6 +190,28 @@ class VideoContent(QFrame):
     def load_film(self, file):
         self.media_player.load_film(file)
 
+    def speaker_enter_event(self, event):
+        self.volumeSlider.show()
+
+    def speaker_leave_event(self, event):
+        # print(event)
+        self.volumeSlider.hide()
+
+    def speaker_onclick(self):
+        # Tắt hoặc bật âm thanh video
+        # print(self.volumeSlider.value())
+        if self.volumeSlider.value() > 0:
+            self.speakerButton.setIcon(QIcon("assets/mute.png"))
+            self.volumeSlider.setValue(0)
+            self.media_player.setVolume(0)
+        else:
+            if self.currentVolume > 60:
+                self.speakerButton.setIcon(QIcon("assets/speaker.png"))
+            else:
+                self.speakerButton.setIcon(QIcon("assets/low-speaker.png"))
+            self.volumeSlider.setValue(self.currentVolume)
+            self.media_player.setVolume(self.currentVolume)
+
     def stop_media_player(self):
         self.media_player.stop()
 
@@ -199,7 +221,7 @@ class VideoContent(QFrame):
         elif self.media_player.state() == QMediaPlayer.PausedState:
             self.playButton.setIcon(QIcon("assets/play.png"))
         elif self.media_player.state() == QMediaPlayer.StoppedState:
-            # print("Video da bi huy: ", self.media_player.myurl)
+            print("Video da bi huy: ", self.media_player.media().canonicalUrl().url())
             print("Huy o giay thu: ", self.currentPosition)
             print("Duration hien tai: ", self.currentDuration)
             # Store last position video
@@ -212,45 +234,37 @@ class VideoContent(QFrame):
         if self.media_player.state() == QMediaPlayer.PlayingState:
             self.media_player.pause()
         else:
+            if self.media_player.state() == QMediaPlayer.StoppedState: 
+                self.set_position(0)
             self.media_player.play()
 
-    def speaker_enter_event(self, event):
-        self.volumeSlider.show()
-
-    def speaker_leave_event(self, event):
-        # print(event)
-        self.volumeSlider.hide()
-
-    def speaker_onclick(self):
-        # Tắt hoặc bật âm thanh video
-        if self.volumeSlider.value() > 0:
-            self.speakerButton.setIcon(QIcon("assets/mute.png"))
-            self.volumeSlider.setValue(0)
-            self.media_player.setVolume(0)
-        else:
-            if self.currentVolume > 60:
-                self.speakerButton.setIcon(QIcon("assets/mute.png"))
-            else:
-                self.speakerButton.setIcon(QIcon("assets/low-speaker.png"))
-            self.volumeSlider.setValue(self.currentVolume)
-            self.media_player.setVolume(self.currentVolume)
         
     def play_forward_10(self):
-        duration = self.media_player.duration()
-        if self.media_player.position() + 10000 > duration:
-            self.media_player.setPosition(duration - 1)
-        else:
-            self.media_player.setPosition(self.media_player.position() + 10000)
+        # duration = self.media_player.duration()
+        # print("Duration in forward: ", duration)
+        self.set_position(self.media_player.position() + 10000)
 
     def play_back_10(self):
         self.media_player.setPosition(self.media_player.position() - 10000)
+        if self.media_player.state() == QMediaPlayer.StoppedState:
+            self.media_player.play()
 
     def set_position(self, time):
-        self.media_player.setPosition(time)
+        duration = self.media_player.duration()
+        # print("Time:", time)
+        # print("Duration", duration)
+        if time >= duration and duration > 0:
+            self.media_player.stop()
+            self.media_player.setPosition(duration)
+            self.currentPosition = self.media_player.position()
+        else:
+            self.media_player.setPosition(time)
         self.update_time_label()
 
     def position_change(self, position):
         # print("In position change")
+        # if position == self.media_player.duration():
+        #     self.media_player.pause()
         self.timeSlider.setValue(position)
         mtime = QTime(0, 0, 0, 0)
         mtime = mtime.addMSecs(self.media_player.position())
@@ -276,7 +290,7 @@ class VideoContent(QFrame):
         # Cập nhật label với thời gian hiện tại và thời lượng toàn bộ của video
         current_time = int(self.media_player.position() / 1000) # Đổi từ milliseconds thành giây
         total_time = int(self.media_player.duration() / 1000) # Đổi từ milliseconds thành giây        
-        print(current_time)
+        # print(current_time)
         current_qtime = QTime(0, 0).addSecs(current_time)
         total_qtime = QTime(0, 0).addSecs(total_time)
         if current_time >= 60*60:
@@ -327,6 +341,7 @@ class VideoContent(QFrame):
             QMessageBox.warning(self.parent, "Warning", "Can't store your url to data")
 
     def update_url(self, filename, url, position, duration):
+        print("Update url")
         listData = []
         try:
             with open("data/" + filename + "_data.json", "r") as file:

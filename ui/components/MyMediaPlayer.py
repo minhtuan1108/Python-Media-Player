@@ -14,6 +14,7 @@ class MyMediaPlayer(QMediaPlayer):
         # self.process = QProcess(self)
         # self.process.readyRead.connect(self.data_ready)
         # self.process.finished.connect(self.play_from_url)
+        self.isError = False
         self.fileDataName = ""
         self.localFile = ""
         self.youtubeUrl = ""
@@ -43,25 +44,30 @@ class MyMediaPlayer(QMediaPlayer):
             self.stop()
             self.setMedia(QMediaContent(QUrl(self.myurl)))
             self.play()
-            # Nếu có thể phát thì set lại play button
-            self.parent.playButton.setEnabled(True)
-            data = {
-                "id": None,
-                "url": self.youtubeUrl if isYTUrl else self.myurl,
-                "title": self.title,
-                "duration": self.duration(),
-                "position": 0,
-                "saved_at": self.get_current_time_string(),
-                "last_saw": self.get_current_time_string(),
-            }
-        
-            if isYTUrl:
-                self.parent.store_url(data, "youtube")
-                self.fileDataName = "youtube"
-            else:
-                self.parent.store_url(data, "http")
-                self.fileDataName = "http"
-                
+            print(self.state() != QMediaPlayer.StoppedState)
+            if self.state() != QMediaPlayer.StoppedState:
+                print("# Nếu có thể phát thì set lại play button")
+                self.parent.playButton.setEnabled(True)
+                data = {
+                    "id": None,
+                    "url": self.youtubeUrl if isYTUrl else self.myurl,
+                    "title": self.title,
+                    "duration": self.duration(),
+                    "position": 0,
+                    "saved_at": self.get_current_time_string(),
+                    "last_saw": self.get_current_time_string(),
+                }
+
+                # reset title attribute
+                self.title = ""
+            
+                if isYTUrl:
+                    self.parent.store_url(data, "youtube")
+                    self.fileDataName = "youtube"
+                else:
+                    self.parent.store_url(data, "http")
+                    self.fileDataName = "http"
+            # self.reset_variable()    
         except:
             QMessageBox.critical(self.parent.parent, 'Error', "Can't load youtube file ! Try again!")
         print(self.myurl)
@@ -85,18 +91,28 @@ class MyMediaPlayer(QMediaPlayer):
         self.setMedia(QMediaContent(QUrl.fromLocalFile(file)))
         self.parent.playButton.setEnabled(True)
         self.play()
-        self.myurl = file
-        data = {
-                "id": None,
-                "url": file,
-                "title": self.title,
-                "duration": self.duration(),
-                "position": 0,
-                "saved_at": self.get_current_time_string(),
-                "last_saw": self.get_current_time_string(),
-            }
-        self.parent.store_url(data, "local_file")
-        self.fileDataName = "local_file"
+        if self.errorString() != "":
+            self.myurl = file
+            data = {
+                    "id": None,
+                    "url": file,
+                    "title": self.title,
+                    "duration": self.duration(),
+                    "position": 0,
+                    "saved_at": self.get_current_time_string(),
+                    "last_saw": self.get_current_time_string(),
+                }
+            self.parent.store_url(data, "local_file")
+            self.fileDataName = "local_file"
+        # self.reset_variable()
+
+    def reset_variable(self):
+        self.isError = False
+        self.fileDataName = ""
+        self.localFile = ""
+        self.youtubeUrl = ""
+        self.myurl = ""
+        self.title = ""
 
     def get_current_time_string(self):
         current_time = datetime.now()

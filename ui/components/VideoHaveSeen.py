@@ -99,47 +99,49 @@ class VideoHaveSeen(QFrame):
     def render_local(self):
         index = 0
         self.remove_layout()  # Loại bỏ layout cũ (nếu có)
+        data = []
 
         # doc file
         try:
             with open("data/local_file_data.json", "r") as f:
                 data = json.load(f)
             print("file ton tai")
+            for video in data:
+                url = video['url']
+                duration = video['duration']
+                saved_at = video['saved_at']
+                btn_local = QPushButton()
+                btn_local.setText(
+                    f"{self.shorten_url(url, 45)}\nDuration: {self.changed_time(duration)}\nSaved_at: {saved_at}")
+                btn_local.setToolTip(f"{url}")
+                btn_local.setIcon(QIcon('./assets/local.png'))
+                btn_local.setIconSize(QSize(50, 50))  # Đặt kích thước của biểu tượng
+                btn_local.setFixedWidth(400)
+                btn_local.setStyleSheet('''
+                                    QPushButton {
+                                        background-color: #f0f0f0; /* Màu nền */
+                                        padding: 10px; /* Khoảng cách nội dung và viền */
+                                        font-size: 16px; /* Kích thước font chữ */
+                                        text-align:left;
+                                        font-family: "Times New Roman";
+                                        padding-right: 10px;
+                                    }   
+                                    QPushButton::hover {
+                                        background-color: #e0e0e0; /* Màu nền khi di chuột qua */
+                                    }
+                                    QPushButton::pressed {
+                                        background-color: #d0d0d0; /* Màu nền khi nhấn */
+                                    }
+                                ''')
+                self.vbox_layout_list.addWidget(btn_local)
+                btn_local.setProperty("url", url)
+                btn_local.clicked.connect(self.showPopupMenu)
+
+            self.buttons[index] = btn_local
         except Exception as e:
             print("file khong ton tai", e)
 
-        for video in data:
-            url = video['url']
-            duration = video['duration']
-            saved_at = video['saved_at']
-            btn_local = QPushButton()
-            btn_local.setText(
-                f"{self.shorten_url(url, 45)}\nDuration: {self.changed_time(duration)}\nSaved_at: {saved_at}")
-            btn_local.setToolTip(f"{url}")
-            btn_local.setIcon(QIcon('./assets/local.png'))
-            btn_local.setIconSize(QSize(50, 50))  # Đặt kích thước của biểu tượng
-            btn_local.setFixedWidth(400)
-            btn_local.setStyleSheet('''
-                                QPushButton {
-                                    background-color: #f0f0f0; /* Màu nền */
-                                    padding: 10px; /* Khoảng cách nội dung và viền */
-                                    font-size: 16px; /* Kích thước font chữ */
-                                    text-align:left;
-                                    font-family: "Times New Roman";
-                                    padding-right: 10px;
-                                }   
-                                QPushButton::hover {
-                                    background-color: #e0e0e0; /* Màu nền khi di chuột qua */
-                                }
-                                QPushButton::pressed {
-                                    background-color: #d0d0d0; /* Màu nền khi nhấn */
-                                }
-                            ''')
-            self.vbox_layout_list.addWidget(btn_local)
-            btn_local.setProperty("url", url)
-            btn_local.clicked.connect(self.showPopupMenu)
-
-        self.buttons[index] = btn_local
+        
 
     # render giao dien link network
     def render_network(self):
@@ -151,41 +153,42 @@ class VideoHaveSeen(QFrame):
             with open("data/http_data.json", "r") as f:
                 data = json.load(f)
             print("file ton tai")
+            for video in data:
+                url = video['url']
+                duration = video['duration']
+                saved_at = video['saved_at']
+
+                btn_network = QPushButton()
+                btn_network.setText(
+                    f"{self.shorten_url(url, 45)}\nDuration: {self.changed_time(duration)}\nSaved_at: {saved_at}")
+                btn_network.setToolTip(f"{url}")
+                btn_network.setIcon(QIcon('./assets/netword.png'))
+                btn_network.setIconSize(QSize(50, 50))
+                btn_network.setFixedWidth(400)
+                self.vbox_layout_list.addWidget(btn_network)
+                btn_network.setStyleSheet("""
+                                    QPushButton {
+                                        background-color: #f0f0f0; /* Màu nền */
+                                        padding: 10px; /* Khoảng cách nội dung và viền */
+                                        font-size: 16px; /* Kích thước font chữ */
+                                        text-align:left;
+                                        font-family: "Times New Roman";
+                                        
+                                    }
+                                    QPushButton:hover {
+                                        background-color: #e0e0e0; /* Màu nền khi di chuột qua */
+                                    }
+                                    QPushButton:pressed {
+                                        background-color: #d0d0d0; /* Màu nền khi nhấn */
+                                    }
+                                """)
+                btn_network.setProperty("url", url)
+                btn_network.clicked.connect(self.showPopupMenu)
+            self.buttons[index] = btn_network
         except Exception as e:
             print("file khong ton tai", e)
 
-        for video in data:
-            url = video['url']
-            duration = video['duration']
-            saved_at = video['saved_at']
-
-            btn_network = QPushButton()
-            btn_network.setText(
-                f"{self.shorten_url(url, 45)}\nDuration: {self.changed_time(duration)}\nSaved_at: {saved_at}")
-            btn_network.setToolTip(f"{url}")
-            btn_network.setIcon(QIcon('./assets/netword.png'))
-            btn_network.setIconSize(QSize(50, 50))
-            btn_network.setFixedWidth(400)
-            self.vbox_layout_list.addWidget(btn_network)
-            btn_network.setStyleSheet("""
-                                QPushButton {
-                                    background-color: #f0f0f0; /* Màu nền */
-                                    padding: 10px; /* Khoảng cách nội dung và viền */
-                                    font-size: 16px; /* Kích thước font chữ */
-                                    text-align:left;
-                                    font-family: "Times New Roman";
-                                    
-                                }
-                                QPushButton:hover {
-                                    background-color: #e0e0e0; /* Màu nền khi di chuột qua */
-                                }
-                                QPushButton:pressed {
-                                    background-color: #d0d0d0; /* Màu nền khi nhấn */
-                                }
-                            """)
-            btn_network.setProperty("url", url)
-            btn_network.clicked.connect(self.showPopupMenu)
-        self.buttons[index] = btn_network
+        
 
     # render giao dien link youtube
     def render_youtube(self):
@@ -197,39 +200,40 @@ class VideoHaveSeen(QFrame):
             with open("data/youtube_data.json", "r") as f:
                 data = json.load(f)
             print("file ton tai")
+            for video in data:
+                title = video['title'] if video['title'] != '' else video['url']
+                duration = video['duration']
+                saved_at = video['saved_at']
+                btn_youtube = QPushButton()
+                btn_youtube.setText(
+                    f"{self.shorten_url(title, 45)}\nDuration: {self.changed_time(duration)}\nSaved_at: {saved_at}")
+                btn_youtube.setToolTip(f"{title}")
+                btn_youtube.setIcon(QIcon('./assets/youtube.png'))
+                btn_youtube.setIconSize(QSize(50, 50))
+                btn_youtube.setFixedWidth(400)
+                self.vbox_layout_list.addWidget(btn_youtube)
+                btn_youtube.setStyleSheet("""
+                                    QPushButton {
+                                        background-color: #f0f0f0; /* Màu nền */
+                                        padding: 10px; /* Khoảng cách nội dung và viền */
+                                        font-size: 16px; /* Kích thước font chữ */
+                                        text-align:left;
+                                        font-family: "Times New Roman";
+                                    }
+                                    QPushButton:hover {
+                                        background-color: #e0e0e0; /* Màu nền khi di chuột qua */
+                                    }
+                                    QPushButton:pressed {
+                                        background-color: #d0d0d0; /* Màu nền khi nhấn */
+                                    }
+                                """)
+                btn_youtube.clicked.connect(self.showPopupMenu)
+                btn_youtube.setProperty("url", video["url"])
+            self.buttons[index] = btn_youtube
         except Exception as e:
             print("file khong ton tai", e)
 
-        for video in data:
-            url = video['url']
-            duration = video['duration']
-            saved_at = video['saved_at']
-            btn_youtube = QPushButton()
-            btn_youtube.setText(
-                f"{self.shorten_url(url, 45)}\nDuration: {self.changed_time(duration)}\nSaved_at: {saved_at}")
-            btn_youtube.setToolTip(f"{url}")
-            btn_youtube.setIcon(QIcon('./assets/youtube.png'))
-            btn_youtube.setIconSize(QSize(50, 50))
-            btn_youtube.setFixedWidth(400)
-            self.vbox_layout_list.addWidget(btn_youtube)
-            btn_youtube.setStyleSheet("""
-                                QPushButton {
-                                    background-color: #f0f0f0; /* Màu nền */
-                                    padding: 10px; /* Khoảng cách nội dung và viền */
-                                    font-size: 16px; /* Kích thước font chữ */
-                                    text-align:left;
-                                    font-family: "Times New Roman";
-                                }
-                                QPushButton:hover {
-                                    background-color: #e0e0e0; /* Màu nền khi di chuột qua */
-                                }
-                                QPushButton:pressed {
-                                    background-color: #d0d0d0; /* Màu nền khi nhấn */
-                                }
-                            """)
-            btn_youtube.clicked.connect(self.showPopupMenu)
-            btn_youtube.setProperty("url", url)
-        self.buttons[index] = btn_youtube
+        
 
     # Loại bỏ layout của tab khi không được chọn
     def remove_layout(self):
@@ -261,6 +265,7 @@ class VideoHaveSeen(QFrame):
         text = self.tab_bar.tabText(index_action)
         myurl = self.selected_url
         self.parent.videoContent.media_player.myurl = myurl
+        print(myurl)
         if text == "Local":
             self.parent.videoHaveSeen.hide()
             self.parent.videoContent.show()

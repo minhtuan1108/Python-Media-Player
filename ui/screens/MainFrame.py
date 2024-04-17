@@ -98,6 +98,7 @@ class MainFrame(QFrame):
     def styleSheet(self):
         return """
             QMenu {
+                color: black;
                 border: 1px solid #ccc; /* Đường viền */
                 padding: 4px;
                 background: white;
@@ -106,6 +107,7 @@ class MainFrame(QFrame):
                 padding: 4px 20px;
             }
             QMenu::item:hover {
+                color: white
                 background: black; /* Màu nền khi hover */
             }
         """
