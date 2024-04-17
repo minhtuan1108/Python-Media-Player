@@ -4,12 +4,13 @@ from PyQt5.QtGui import QIcon, QCursor
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtWidgets import QGridLayout, QTabBar, QMessageBox, QVBoxLayout, QLabel, QWidget, QHBoxLayout, QFrame, \
     QPushButton, QScrollArea, QMenu
-
+from ui.components.MyMediaPlayer import MyMediaPlayer
 
 class VideoHaveSeen(QFrame):
-    def __init__(self):
+    def __init__(self,parent):
         super().__init__()
         # Tạo một Tab Bar
+        self.parent = parent
         self.tab_bar = QTabBar()
         self.tab_bar.addTab("Local")
         self.tab_bar.addTab("Network")
@@ -113,7 +114,7 @@ class VideoHaveSeen(QFrame):
             saved_at = video['saved_at']
             btn_local = QPushButton()
             btn_local.setText(
-                f"{self.shorten_url(url, 50)}\nDuration: {self.changed_time(duration)}\nSaved_at: {saved_at}")
+                f"{self.shorten_url(url, 45)}\nDuration: {self.changed_time(duration)}\nSaved_at: {saved_at}")
             btn_local.setToolTip(f"{url}")
             btn_local.setIcon(QIcon('./assets/local.png'))
             btn_local.setIconSize(QSize(50, 50))  # Đặt kích thước của biểu tượng
@@ -160,7 +161,7 @@ class VideoHaveSeen(QFrame):
 
             btn_network = QPushButton()
             btn_network.setText(
-                f"{self.shorten_url(url, 50)}\nDuration: {self.changed_time(duration)}\nSaved_at: {saved_at}")
+                f"{self.shorten_url(url, 45)}\nDuration: {self.changed_time(duration)}\nSaved_at: {saved_at}")
             btn_network.setToolTip(f"{url}")
             btn_network.setIcon(QIcon('./assets/netword.png'))
             btn_network.setIconSize(QSize(50, 50))
@@ -205,7 +206,7 @@ class VideoHaveSeen(QFrame):
             saved_at = video['saved_at']
             btn_youtube = QPushButton()
             btn_youtube.setText(
-                f"{self.shorten_url(url, 50)}\nDuration: {self.changed_time(duration)}\nSaved_at: {saved_at}")
+                f"{self.shorten_url(url, 45)}\nDuration: {self.changed_time(duration)}\nSaved_at: {saved_at}")
             btn_youtube.setToolTip(f"{url}")
             btn_youtube.setIcon(QIcon('./assets/youtube.png'))
             btn_youtube.setIconSize(QSize(50, 50))
@@ -249,11 +250,33 @@ class VideoHaveSeen(QFrame):
         self.action2 = self.popup_menu.addAction("Xóa")
         sender = self.sender()
         self.selected_url = sender.property("url")
+        self.action1.triggered.connect(self.actionPlayer)
         self.action2.triggered.connect(self.actionDelete)
         # Lấy tọa độ của sự kiện chuột và hiển thị menu popup tại vị trí đó
         cursor_pos = QCursor.pos()
         self.popup_menu.exec_(cursor_pos)
 
+    def actionPlayer(self):
+        index_action = self.index_saved
+        text = self.tab_bar.tabText(index_action)
+        myurl = self.selected_url
+        self.parent.videoContent.media_player.myurl = myurl
+        if text == "Local":
+            self.parent.videoHaveSeen.hide()
+            self.parent.videoContent.show()
+            self.parent.videoContent.media_player.load_film(myurl)
+            self.parent.parent.navBar.on_button_clicked("Now Playing")
+        elif text == "Network":
+            self.parent.videoHaveSeen.hide()
+            self.parent.videoContent.show()
+            self.parent.videoContent.media_player.play_from_url(False)
+            self.parent.parent.navBar.on_button_clicked("Now Playing")
+        elif text == "Youtube":
+            self.parent.videoHaveSeen.hide()
+            self.parent.videoContent.show()
+            self.parent.videoContent.media_player.get_youtube_url()
+            self.parent.parent.navBar.on_button_clicked("Now Playing")
+    
     def actionDelete(self):
         # Yêu cầu xác nhận từ người dùng
         reply = QMessageBox.question(self, 'Thông báo', 'Bạn có chắc muốn xóa?', QMessageBox.Yes | QMessageBox.No,

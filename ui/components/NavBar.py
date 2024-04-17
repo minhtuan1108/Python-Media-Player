@@ -1,8 +1,6 @@
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon
-# from ui.components.VideoContent import VideoContent
-# from ui.components.VideoHaveSeen import VideoHaveSeen
 from ui.screens.MainFrame import MainFrame
 
 
@@ -23,7 +21,7 @@ class Nav_Bar(QHBoxLayout):
                                     border-radius: 30px;
                                     
                                         """)
-        self.frame_layout.setFixedSize(500, 60)
+        self.frame_layout.setFixedSize(350, 60)
 
         self.frame_layout.setLayout(self.hbox_layouts)  # set hbox_layouts vào frame_layout
 
@@ -61,24 +59,24 @@ class Nav_Bar(QHBoxLayout):
         # set style for button
         self.active_button_style = "background-color: white; color: black; border-radius: 20px; font-size: 16px;"
         self.default_style = "background-color: #969696; color: black; border-radius: 20px; font-size: 16px;"
-        self.button1.setStyleSheet(self.default_style)
-        self.button2.setStyleSheet(self.active_button_style)
+        self.button1.setStyleSheet(self.active_button_style)
+        self.button2.setStyleSheet(self.default_style)
         self.button3.setStyleSheet(self.default_style)
 
         # Connect button clicks to transitions
-        self.button1.clicked.connect(self.on_button_clicked)
-        self.button2.clicked.connect(self.on_button_clicked)
-        self.button3.clicked.connect(self.on_button_clicked)
+        self.button1.clicked.connect(lambda: self.on_button_clicked("Library"))
+        self.button2.clicked.connect(lambda: self.on_button_clicked(("Now Playing")))
+        self.button3.clicked.connect(lambda: self.on_button_clicked(("Playlist")))
         
         
         # Add buttons to the horizontal layout
         self.hbox_layouts.addWidget(self.button1)
         self.hbox_layouts.addWidget(self.button2)
-        self.hbox_layouts.addWidget(self.button3)
+        # self.hbox_layouts.addWidget(self.button3)
 
-    def on_button_clicked(self):
-        sender = self.sender()
-        text = sender.text()
+    def on_button_clicked(self,text):
+        # sender = self.sender()
+        # text = sender.text()
         if text == "Library":
             self.button1.setStyleSheet(self.active_button_style)
             self.button2.setStyleSheet(self.default_style)

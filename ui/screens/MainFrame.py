@@ -10,16 +10,17 @@ class MainFrame(QFrame):
     def __init__(self, parent):
         super().__init__()
         self.parent = parent
+        # self.parent.navBar.on_button_clicked(self)
         self.setStyleSheet("background-color: #FFFFFF; border-radius: 10px;")
 
         # Khởi tạo các thành phần của MainFrame
         self.videoContent = VideoContent(self)
-        self.videoHaveSeen = VideoHaveSeen()
+        self.videoHaveSeen = VideoHaveSeen(self)
 
         # Thêm VideoHaveSeen vào layout của MainFrame và ẩn nó ban đầu
         self.layout = QGridLayout()
         self.layout.addWidget(self.videoContent, 0, 0)
-        self.layout.addWidget(self.videoHaveSeen, 0, 0, Qt.AlignBottom)
+        self.layout.addWidget(self.videoHaveSeen, 0, 0)
         # self.videoHaveSeen.setVisible(False)
         self.setLayout(self.layout)
         self.videoContent.inputDialog.move(self.frameGeometry().center())
