@@ -35,7 +35,8 @@ class MainFrame(QFrame):
         # goi ham de add cac chuc nang cua xem video vao menu context
         self.videoContent.add_item_context_menu()
         actionclipboard = self.menu.addSeparator()
-        self.actionFull = self.menu.addAction(QIcon.fromTheme("view-fullscreen"), "Fullscreen (f)")
+
+        self.actionFull = self.menu.addAction(QIcon.fromTheme("view-fullscreen"), "Normal screen (f)" if self.parent.windowState() & Qt.WindowFullScreen else "Fullscreen (f)")
         actionSep = self.menu.addSeparator()
         actionInfo = self.menu.addAction(QIcon.fromTheme("help-about"), "Info (i)")
         action5 = self.menu.addSeparator()
@@ -59,7 +60,6 @@ class MainFrame(QFrame):
         if self.parent.windowState() & Qt.WindowFullScreen:
             # QApplication.setOverrideCursor(Qt.ArrowCursor)
             self.parent.showNormal()
-            self.actionFull.setText("Fullscreen (f)")
             print("no Fullscreen")
         else:
             self.parent.showFullScreen()
@@ -98,16 +98,15 @@ class MainFrame(QFrame):
     def styleSheet(self):
         return """
             QMenu {
-                color: black;
+                background: rgba(98, 98, 98, 90);
+                color: white;
                 border: 1px solid #ccc; /* Đường viền */
                 padding: 4px;
-                background: white;
             }
             QMenu::item {
                 padding: 4px 20px;
             }
-            QMenu::item:hover {
-                color: white
-                background: black; /* Màu nền khi hover */
+            QMenu::item:selected {
+                background: rgba(98, 98, 98, 255);
             }
         """

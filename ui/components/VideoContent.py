@@ -37,6 +37,44 @@ class VideoContent(QFrame):
         self.currentPosition = 0
         self.currentDuration = 0
 
+        # Tạo frame chứa layout bao gồm các nút play và tua video
+        self.centerFrame = QFrame()
+        self.centerFrame.setStyleSheet("background-color: rgba(0, 0, 0, 0.05);")
+
+        # Tạo layout để chứa các widget play và tua video
+        self.centerHbox = QHBoxLayout()
+        self.centerHbox.setAlignment(Qt.AlignCenter)
+        self.centerFrame.setLayout(self.centerHbox)
+
+        # Tạo button play cho center frame
+        self.playButtonCenter = QPushButton()
+        self.playButtonCenter.setIcon(QIcon("assets/play.png"))
+        self.playButtonCenter.setIconSize(QSize(40, 40))
+        self.playButtonCenter.setStyleSheet("background: none; border-radius: 20px")
+        self.playButtonCenter.clicked.connect(self.play_pause_video)
+
+        # Tạo button tua tới 10s cho center frame
+        self.forward10Button = QPushButton()
+        self.forward10Button.setIcon(QIcon("assets/forward10.png"))
+        self.forward10Button.setIconSize(QSize(40, 40))
+        self.forward10Button.setStyleSheet("background: none; border-radius: 20px")
+        self.forward10Button.clicked.connect(self.play_forward_10)
+
+        # Tạo button tua ngược 10s cho center fame
+        self.replay10Button = QPushButton()
+        self.replay10Button.setIcon(QIcon("assets/replay10.png"))
+        self.replay10Button.setIconSize(QSize(40, 40))
+        self.replay10Button.setStyleSheet("background: none; border-radius: 20px")
+        self.replay10Button.clicked.connect(self.play_back_10)
+
+        # Tao layout chua 3 nut treen
+        self.centerButtonBox = QHBoxLayout()
+        self.centerButtonBox.setAlignment(Qt.AlignCenter)
+        self.centerButtonBox.addWidget(self.replay10Button)
+        self.centerButtonBox.addWidget(self.playButtonCenter)
+        self.centerButtonBox.addWidget(self.forward10Button)
+        self.centerHbox.addLayout(self.centerButtonBox)
+
         # Tạo frame để điều chỉnh layout
         self.frame = QFrame()
         self.frame.hide()
@@ -62,32 +100,13 @@ class VideoContent(QFrame):
 
         # Tạo button play
         self.playButton = QPushButton()
-        self.playButton.setIcon(QIcon("assets/pause.png"))
+        self.playButton.setIcon(QIcon("assets/play.png"))
         self.playButton.setIconSize(QSize(32, 32))
         self.playButton.clicked.connect(self.play_pause_video)
 
-        # Tạo button tua tới 10s
-        self.forward10Button = QPushButton()
-        self.forward10Button.setIcon(QIcon("assets/forward10.png"))
-        self.forward10Button.clicked.connect(self.play_forward_10)
-
-        # Tạo button tua ngược 10s
-        self.replay10Button = QPushButton()
-        self.replay10Button.setIcon(QIcon("assets/replay10.png"))
-        self.replay10Button.clicked.connect(self.play_back_10)
-
         # Tao label dem thoi gian
-        self.time_label = QLabel()
+        self.time_label = QLabel("00:00 / 00:00")
         self.time_label.setStyleSheet("background-color: none;color: white;")
-
-        # Tạo layout chưa cac nút bên trên
-        self.playVideoBox = QHBoxLayout()
-        self.playVideoBox.setAlignment(Qt.AlignLeft)
-        self.playVideoBox.addWidget(self.replay10Button)
-        self.playVideoBox.addWidget(self.playButton)
-        self.playVideoBox.addWidget(self.forward10Button)
-        self.playVideoBox.addWidget(self.time_label)
-        self.containButtonsBox.addLayout(self.playVideoBox)
 
         # Tạo Label loa
         self.speakerButton = QPushButton()
@@ -107,15 +126,6 @@ class VideoContent(QFrame):
         self.volumeSlider.sliderMoved.connect(self.changeVolume)  
         self.volumeSlider.setStyleSheet(stylesheet(self))
 
-        # Tạo nút chỉnh tốc độ video
-        self.speedComboBox = QComboBox()
-        self.speedComboBox.addItems(
-            ['0.5x', '0.75x', '1.0x', '1.25x', '1.5x', '1.75x', '2.0x'])  # Tốc độ video có thể chọn
-
-        # Tạo box chứa phần điều chỉnh âm lượng và tốc độ phát
-        self.soundBox = QHBoxLayout()
-        self.soundBox.setAlignment(Qt.AlignRight)
-
         # Tao frame fix voi noi dung de xu ly su kien
         self.soundFixedFrame = QFrame()
         self.soundFixedFrame.setMinimumWidth(36)
@@ -130,8 +140,21 @@ class VideoContent(QFrame):
         self.soundFixedBox.addWidget(self.speakerButton)
         self.soundFixedBox.addWidget(self.volumeSlider)
         self.soundFixedFrame.setLayout(self.soundFixedBox)
-        self.soundBox.addWidget(self.soundFixedFrame)
-        self.containButtonsBox.addLayout(self.soundBox)
+
+        # Tạo layout chưa cac nút bên trên
+        self.playVideoBox = QHBoxLayout()
+        self.playVideoBox.setAlignment(Qt.AlignLeft)
+        self.playVideoBox.addWidget(self.playButton)
+        self.playVideoBox.addWidget(self.soundFixedFrame)
+        self.playVideoBox.addWidget(self.time_label)
+        self.containButtonsBox.addLayout(self.playVideoBox)
+
+        # Tạo box chứa phần điều chỉnh ben phai
+        self.rightBox = QHBoxLayout()
+        self.rightBox.setAlignment(Qt.AlignRight)
+
+
+        self.containButtonsBox.addLayout(self.rightBox)
 
         # Tạo thanh thời gian
         self.timeSlider = QSlider(Qt.Horizontal)
@@ -148,16 +171,17 @@ class VideoContent(QFrame):
 
         self.grid_layout = QGridLayout()
         self.grid_layout.addWidget(self.videoWidget, 0, 0)
+        self.grid_layout.addWidget(self.centerFrame, 0, 0)
         self.grid_layout.addWidget(self.frame, 0, 0, Qt.AlignBottom)
 
         self.setLayout(self.grid_layout)
 
     def add_item_context_menu(self):
-        actionFile = self.parent.menu.addAction(QIcon.fromTheme("video-x-generic"), "open File (o)")
+        actionFile = self.parent.menu.addAction(QIcon("assets/folder.png"), "open File (o)")
         actionclipboard = self.parent.menu.addSeparator()
         actionURL = self.parent.menu.addAction(QIcon.fromTheme("browser"), "URL from Internet (u)")
         actionclipboard = self.parent.menu.addSeparator()
-        actionYTurl = self.parent.menu.addAction(QIcon.fromTheme("youtube"), "URL from YouTube (y)")
+        actionYTurl = self.parent.menu.addAction(QIcon("assets/youtube.png"), "URL from YouTube (y)")
 
         actionFile.triggered.connect(self.parent.open_file)
         actionURL.triggered.connect(lambda: self.media_player.get_url_from_clip('http'))
@@ -179,10 +203,12 @@ class VideoContent(QFrame):
         # Hiển thị nút khi di chuyển chuột vào frame
         print("In enter event")
         self.frame.show()
+        self.centerFrame.show()
 
     def frame_leave_event(self, event):
         # Ẩn frame khi di chuyển chuột ra khỏi frame
         self.frame.hide()
+        self.centerFrame.hide()
 
     def handle_mouse_in_frame(self, event):
         pass

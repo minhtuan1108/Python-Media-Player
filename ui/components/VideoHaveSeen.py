@@ -249,9 +249,24 @@ class VideoHaveSeen(QFrame):
     def showPopupMenu(self):
         # Tạo một menu popup
         self.popup_menu = QMenu(self)
+        self.popup_menu.setStyleSheet(
+            """
+            QMenu {
+                background: rgba(98, 98, 98, 90);
+                color: white;
+                padding: 4px;
+            }
+            QMenu::item {
+                padding: 4px 20px;
+            }
+            QMenu::item:selected {
+                background: rgba(98, 98, 98, 255);
+            }
+        """
+        )
         # Thêm các mục vào menu popup
-        self.action1 = self.popup_menu.addAction("Phát")
-        self.action2 = self.popup_menu.addAction("Xóa")
+        self.action1 = self.popup_menu.addAction(QIcon("assets/play_green.png"), "Phát")
+        self.action2 = self.popup_menu.addAction(QIcon("assets/trash_red.png"), "Xóa")
         sender = self.sender()
         self.selected_url = sender.property("url")
         self.action1.triggered.connect(self.actionPlayer)
