@@ -3,7 +3,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import QFrame, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QSlider, QComboBox, QGridLayout, \
-    QMessageBox
+    QMessageBox, QWidget
 
 from ui.components.MyMediaPlayer import MyMediaPlayer
 from ui.components.InputUrlDialog import InputUrlDialog
@@ -27,13 +27,14 @@ class VideoContent(QFrame):
         self.videoWidget = QVideoWidget()
         self.videoWidget.setStyleSheet("border-radius: 20px;")
         self.videoWidget.mousePressEvent = self.play_pause_video
-        self.videoWidget.mouseDoubleClickEvent = self.parent.showFullScreen
+        self.videoWidget.mouseDoubleClickEvent = self.parent.show_fullscreen
+
         self.media_player = MyMediaPlayer(self)
-        self.media_player.setVideoOutput(self.videoWidget)
         self.media_player.stateChanged.connect(self.state_change)
         self.media_player.positionChanged.connect(self.position_change)
         self.media_player.durationChanged.connect(self.duration_change)
         self.media_player.error.connect(self.handleError)
+        self.media_player.setVideoOutput(self.videoWidget)
         self.currentPosition = 0
         self.currentDuration = 0
 
@@ -155,8 +156,35 @@ class VideoContent(QFrame):
         self.rightBox = QHBoxLayout()
         self.rightBox.setAlignment(Qt.AlignRight)
 
+        self.miniVideoButton = QPushButton()
+        self.miniVideoButton.setIcon(QIcon("assets/minivideo.png"))
+        self.miniVideoButton.setIconSize(QSize(28,28))
+        # self.miniVideoButton.clicked.connect(self.minisizing_video)
+
+        self.fullscreenButton = QPushButton()
+        self.fullscreenButton.setIcon(QIcon("assets/expand.png"))
+        self.fullscreenButton.setIconSize(QSize(28,28))
+        self.fullscreenButton.clicked.connect(self.parent.fullscreen)
+
+        self.rightBox.addWidget(self.miniVideoButton, 0, Qt.AlignRight)
+        self.rightBox.addSpacing(15)
+        self.rightBox.addWidget(self.fullscreenButton, 0, Qt.AlignRight)
+        self.rightBox.addSpacing(40)
 
         self.containButtonsBox.addLayout(self.rightBox)
+
+        # tạo widget video cho mini video
+        self.miniVideoWidget = QVideoWidget()
+        self.miniVideoWidget.setStyleSheet("border-radius: 20px;")
+        # self.miniVideoWidget.mousePressEvent = self.play_pause_video
+        # self.miniVideoWidget.mouseDoubleClickEvent = self.parent.showFullScreen
+        
+        self.miniVideoLayout = QHBoxLayout()
+        self.miniVideoLayout.addWidget(self.miniVideoWidget)
+
+        self.miniVideoFrame = QFrame()
+        self.miniVideoFrame.setLayout(self.miniVideoLayout)
+
 
         # Tạo thanh thời gian
         self.timeSlider = QSlider(Qt.Horizontal)
@@ -179,15 +207,17 @@ class VideoContent(QFrame):
         self.setLayout(self.grid_layout)
 
     def add_item_context_menu(self):
-        actionFile = self.parent.menu.addAction(QIcon("assets/folder.png"), "open File (o)")
+        actionFile = self.parent.menu.addAction(QIcon("assets/folder.png"), "open File (Ctrl + O)")
         actionclipboard = self.parent.menu.addSeparator()
-        actionURL = self.parent.menu.addAction(QIcon.fromTheme("browser"), "URL from Internet (u)")
+        actionURL = self.parent.menu.addAction(QIcon.fromTheme("browser"), "URL from Internet (Ctrl + W)")
         actionclipboard = self.parent.menu.addSeparator()
-        actionYTurl = self.parent.menu.addAction(QIcon("assets/youtube.png"), "URL from YouTube (y)")
+        actionYTurl = self.parent.menu.addAction(QIcon("assets/youtube.png"), "URL from YouTube (Ctrl + Y)")
+        actionOpenInputDialog = self.parent.menu.addAction("Open input dialog (Ctrl + N)")
 
         actionFile.triggered.connect(self.parent.open_file)
         actionURL.triggered.connect(lambda: self.media_player.get_url_from_clip('http'))
         actionYTurl.triggered.connect(lambda: self.media_player.get_url_from_clip('youtube'))
+        actionOpenInputDialog.triggered.connect(self.open_input_dialog)
 
     def changeVolume(self, volume):
         print(volume)
@@ -249,23 +279,27 @@ class VideoContent(QFrame):
         elif self.media_player.state() == QMediaPlayer.PausedState:
             self.playButton.setIcon(QIcon("assets/play.png"))
         elif self.media_player.state() == QMediaPlayer.StoppedState:
-            print("Video da bi huy: ", self.media_player.media().canonicalUrl().url())
-            print("Huy o giay thu: ", self.currentPosition)
-            print("Duration hien tai: ", self.currentDuration)
+            # print("Video da bi huy: ", self.media_player.media().canonicalUrl().url())
+            # print("Huy o giay thu: ", self.currentPosition)
+            # print("Duration hien tai: ", self.currentDuration)
             # Store last position video
             url = self.media_player.youtubeUrl if self.media_player.fileDataName == "youtube" else self.media_player.myurl
-            print("Url: ", url)
+            # print("Url: ", url)
             self.update_url(self.media_player.fileDataName, url, self.currentPosition, self.currentDuration)
             self.playButton.setIcon(QIcon("assets/replay.png"))
 
     def play_pause_video(self, event):
-        # Phát hoặc tạm dừng video
+        print("# Phát hoặc tạm dừng video")
         if self.media_player.state() == QMediaPlayer.PlayingState:
+            print("Pause video")
             self.media_player.pause()
+            # self.pip_media_player.pause()
         else:
             if self.media_player.state() == QMediaPlayer.StoppedState: 
                 self.set_position(0)
+            print("Play video")
             self.media_player.play()
+            # self.pip_media_player.play()
 
         
     def play_forward_10(self):
@@ -315,6 +349,9 @@ class VideoContent(QFrame):
             self.media_player.setMedia(QMediaContent())
         print("Error: ", errorString)
 
+    def open_input_dialog(self):
+        self.inputDialog.show()
+
     def update_time_label(self):
         # Cập nhật label với thời gian hiện tại và thời lượng toàn bộ của video
         current_time = int(self.media_player.position() / 1000) # Đổi từ milliseconds thành giây
@@ -331,6 +368,23 @@ class VideoContent(QFrame):
         else:
             total_time_string = total_qtime.toString("mm:ss")
         self.time_label.setText(f"{current_time_string} / {total_time_string}")        
+
+    # def minisizing_video(self):
+    #     w = 200
+    #     h = 80
+    #     parentPos = self.parent.pos()
+    #     parentSize = self.parent.size()
+    #     posX = parentPos.x() + (parentSize.width() - w)/2
+    #     posY = parentPos.y() + (parentSize.height() - h)/2
+    #     print("Vi tri X cua mini video", posX)
+    #     print("Vi tri Y cua mini video", posY)
+    #     self.miniVideoFrame.setGeometry(posX, posY, w, h)
+    #     self.pip_media_player.setMedia(self.media_player.media())
+    #     self.media_player.setVideoOutput(None)
+    #     self.pip_media_player.play()
+    #     self.miniVideoFrame.show()
+    #     # self.miniVideoFrame.update()
+
 
     def store_url(self, dictData, filename):
         print("store url function")
