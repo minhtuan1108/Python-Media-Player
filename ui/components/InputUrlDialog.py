@@ -48,9 +48,15 @@ class InputUrlDialog(QDialog):
             self.parent.media_player.myurl = url
             if "youtube.com" in url:
                 self.handle_close()
+                self.parent.currentPosition = self.parent.media_player.position()
+                self.parent.currentPosition = self.parent.media_player.duration()
+                self.parent.media_player.stop()
                 self.parent.media_player.get_youtube_url()
             elif "http" in url:
                 self.handle_close()
+                self.parent.currentPosition = self.parent.media_player.position()
+                self.parent.currentPosition = self.parent.media_player.duration()
+                self.parent.media_player.stop()
                 self.parent.media_player.play_from_url()
             else:
                 # Thông báo lỗi

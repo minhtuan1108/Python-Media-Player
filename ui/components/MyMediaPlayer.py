@@ -22,6 +22,9 @@ class MyMediaPlayer(QMediaPlayer):
         self.title = ""
 
     def get_url_from_clip(self, fromSource):
+        self.parent.currentPosition = self.position()
+        self.parent.currentDuration = self.duration()
+        self.stop()
         self.myurl = self.clip.text()
         print(self.myurl)
         if self.clip.mimeData().hasText() and "youtube.com" in self.myurl or "http" in self.myurl:
@@ -38,10 +41,9 @@ class MyMediaPlayer(QMediaPlayer):
 
     def play_from_url(self, isYTUrl = False):
         # self.pause()
+        
+        print("File data name: ", self.fileDataName)
         try:
-            self.parent.currentPosition = self.position()
-            self.parent.currentPosition = self.duration()
-            self.stop()
             self.setMedia(QMediaContent(QUrl(self.myurl)))
             self.play()
             print(self.state() != QMediaPlayer.StoppedState)
@@ -63,13 +65,15 @@ class MyMediaPlayer(QMediaPlayer):
             
                 if isYTUrl:
                     self.parent.store_url(data, "youtube")
+                    print("File data name: youtube")
                     self.fileDataName = "youtube"
                 else:
                     self.parent.store_url(data, "http")
                     self.fileDataName = "http"
-            # self.reset_variable()    
-        except:
-            QMessageBox.critical(self.parent.parent, 'Error', "Can't load youtube file ! Try again!")
+                    print("File data name: http")
+        except Exception as e:
+            QMessageBox.critical(self.parent.parent, 'Error', "Can't load file ! Try again!")
+            print(e)
         print(self.myurl)
 
     def get_youtube_url(self):
@@ -86,12 +90,12 @@ class MyMediaPlayer(QMediaPlayer):
 
     def load_film(self, file):
         self.parent.currentPosition = self.position()
-        self.parent.currentPosition = self.duration()
+        self.parent.currentDuration = self.duration()
         self.stop()
         self.setMedia(QMediaContent(QUrl.fromLocalFile(file)))
         self.parent.playButton.setEnabled(True)
         self.play()
-        if self.errorString() != "":
+        if self.state() != QMediaPlayer.StoppedState:
             self.myurl = file
             data = {
                     "id": None,

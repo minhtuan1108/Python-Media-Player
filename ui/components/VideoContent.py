@@ -50,21 +50,21 @@ class VideoContent(QFrame):
         self.playButtonCenter = QPushButton()
         self.playButtonCenter.setIcon(QIcon("assets/play.png"))
         self.playButtonCenter.setIconSize(QSize(40, 40))
-        self.playButtonCenter.setStyleSheet("background: none; border-radius: 20px")
+        self.playButtonCenter.setStyleSheet("background: none;")
         self.playButtonCenter.clicked.connect(self.play_pause_video)
 
         # Tạo button tua tới 10s cho center frame
         self.forward10Button = QPushButton()
         self.forward10Button.setIcon(QIcon("assets/forward10.png"))
-        self.forward10Button.setIconSize(QSize(40, 40))
-        self.forward10Button.setStyleSheet("background: none; border-radius: 20px")
+        self.forward10Button.setIconSize(QSize(32, 32))
+        self.forward10Button.setStyleSheet("background: none;")
         self.forward10Button.clicked.connect(self.play_forward_10)
 
         # Tạo button tua ngược 10s cho center fame
         self.replay10Button = QPushButton()
         self.replay10Button.setIcon(QIcon("assets/replay10.png"))
-        self.replay10Button.setIconSize(QSize(40, 40))
-        self.replay10Button.setStyleSheet("background: none; border-radius: 20px")
+        self.replay10Button.setIconSize(QSize(32, 32))
+        self.replay10Button.setStyleSheet("background: none;")
         self.replay10Button.clicked.connect(self.play_back_10)
 
         # Tao layout chua 3 nut treen
@@ -136,7 +136,7 @@ class VideoContent(QFrame):
 
         # Tao layout fix de chua
         self.soundFixedBox = QHBoxLayout()
-        self.soundFixedBox.setAlignment(Qt.AlignRight)
+        self.soundFixedBox.setAlignment(Qt.AlignLeft)
         self.soundFixedBox.addWidget(self.speakerButton)
         self.soundFixedBox.addWidget(self.volumeSlider)
         self.soundFixedFrame.setLayout(self.soundFixedBox)
@@ -144,9 +144,11 @@ class VideoContent(QFrame):
         # Tạo layout chưa cac nút bên trên
         self.playVideoBox = QHBoxLayout()
         self.playVideoBox.setAlignment(Qt.AlignLeft)
-        self.playVideoBox.addWidget(self.playButton)
-        self.playVideoBox.addWidget(self.soundFixedFrame)
-        self.playVideoBox.addWidget(self.time_label)
+        self.playVideoBox.addWidget(self.replay10Button, 0, Qt.AlignLeft)
+        self.playVideoBox.addWidget(self.playButton, 0, Qt.AlignLeft)
+        self.playVideoBox.addWidget(self.forward10Button, 0, Qt.AlignLeft)
+        self.playVideoBox.addWidget(self.soundFixedFrame, 0, Qt.AlignLeft)
+        self.playVideoBox.addWidget(self.time_label, 0, Qt.AlignLeft)
         self.containButtonsBox.addLayout(self.playVideoBox)
 
         # Tạo box chứa phần điều chỉnh ben phai
@@ -171,7 +173,7 @@ class VideoContent(QFrame):
 
         self.grid_layout = QGridLayout()
         self.grid_layout.addWidget(self.videoWidget, 0, 0)
-        self.grid_layout.addWidget(self.centerFrame, 0, 0)
+        # self.grid_layout.addWidget(self.centerFrame, 0, 0, Qt.AlignCenter)
         self.grid_layout.addWidget(self.frame, 0, 0, Qt.AlignBottom)
 
         self.setLayout(self.grid_layout)
@@ -203,12 +205,12 @@ class VideoContent(QFrame):
         # Hiển thị nút khi di chuyển chuột vào frame
         print("In enter event")
         self.frame.show()
-        self.centerFrame.show()
+        # self.centerFrame.show()
 
     def frame_leave_event(self, event):
         # Ẩn frame khi di chuyển chuột ra khỏi frame
         self.frame.hide()
-        self.centerFrame.hide()
+        # self.centerFrame.hide()
 
     def handle_mouse_in_frame(self, event):
         pass
@@ -252,6 +254,7 @@ class VideoContent(QFrame):
             print("Duration hien tai: ", self.currentDuration)
             # Store last position video
             url = self.media_player.youtubeUrl if self.media_player.fileDataName == "youtube" else self.media_player.myurl
+            print("Url: ", url)
             self.update_url(self.media_player.fileDataName, url, self.currentPosition, self.currentDuration)
             self.playButton.setIcon(QIcon("assets/replay.png"))
 
@@ -339,9 +342,9 @@ class VideoContent(QFrame):
             with open("data/" + filename + "_data.json", "r") as file:
                 try:
                     listData = json.load(file)
-                    print(listData)
+                    # print(listData)
                     for data in listData:
-                        print(data["id"])
+                        # print(data["id"])
                         if(data["url"] == dictData["url"]):
                             data["last_saw"] = self.media_player.get_current_time_string()
                             conflict = True
