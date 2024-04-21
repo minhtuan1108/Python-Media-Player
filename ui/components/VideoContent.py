@@ -11,6 +11,7 @@ from ui.components.InputUrlDialog import InputUrlDialog
 import json
 
 
+
 class VideoContent(QFrame):
     def __init__(self, parent = None):
         super().__init__()
@@ -57,14 +58,14 @@ class VideoContent(QFrame):
         # Tạo button tua tới 10s cho center frame
         self.forward10Button = QPushButton()
         self.forward10Button.setIcon(QIcon("assets/forward10.png"))
-        self.forward10Button.setIconSize(QSize(32, 32))
+        self.forward10Button.setIconSize(QSize(28, 28))
         self.forward10Button.setStyleSheet("background: none;")
         self.forward10Button.clicked.connect(self.play_forward_10)
 
         # Tạo button tua ngược 10s cho center fame
         self.replay10Button = QPushButton()
         self.replay10Button.setIcon(QIcon("assets/replay10.png"))
-        self.replay10Button.setIconSize(QSize(32, 32))
+        self.replay10Button.setIconSize(QSize(28, 28))
         self.replay10Button.setStyleSheet("background: none;")
         self.replay10Button.clicked.connect(self.play_back_10)
 
@@ -102,7 +103,7 @@ class VideoContent(QFrame):
         # Tạo button play
         self.playButton = QPushButton()
         self.playButton.setIcon(QIcon("assets/play.png"))
-        self.playButton.setIconSize(QSize(32, 32))
+        self.playButton.setIconSize(QSize(28, 28))
         self.playButton.clicked.connect(self.play_pause_video)
 
         # Tao label dem thoi gian
@@ -112,8 +113,8 @@ class VideoContent(QFrame):
         # Tạo Label loa
         self.speakerButton = QPushButton()
         self.speakerButton.setIcon(QIcon("assets/speaker.png"))
-        self.speakerButton.setFixedWidth(32)
-        self.speakerButton.setIconSize(QSize(32, 32))
+        self.speakerButton.setFixedWidth(28)
+        self.speakerButton.setIconSize(QSize(28, 28))
         self.speakerButton.clicked.connect(self.speaker_onclick)
 
         # Tạo thanh âm lượng
@@ -158,18 +159,47 @@ class VideoContent(QFrame):
 
         self.miniVideoButton = QPushButton()
         self.miniVideoButton.setIcon(QIcon("assets/minivideo.png"))
-        self.miniVideoButton.setIconSize(QSize(28,28))
+        self.miniVideoButton.setIconSize(QSize(24,24))
         # self.miniVideoButton.clicked.connect(self.minisizing_video)
 
         self.fullscreenButton = QPushButton()
-        self.fullscreenButton.setIcon(QIcon("assets/expand.png"))
-        self.fullscreenButton.setIconSize(QSize(28,28))
+        self.fullscreenButton.setIcon(QIcon("assets/fullscreen.png"))
+        self.fullscreenButton.setIconSize(QSize(24,24))
         self.fullscreenButton.clicked.connect(self.parent.fullscreen)
 
+        gif_path = "assets/download.gif"
+        self.movie = QMovie(gif_path)
+        self.movie.setScaledSize(QSize(24, 24))
+
+        self.downloadLabel = QLabel()
+        self.downloadLabel.setMovie(self.movie)
+        self.downloadLabel.setStyleSheet("background-color: none;")
+        
+        self.downloadLabel.hide()
+
+        self.downloadButton = QPushButton()
+        self.downloadButton.setIcon(QIcon("assets/download.png"))
+        self.downloadButton.setIconSize(QSize(24, 24))
+        self.downloadButton.setEnabled(False)
+        self.downloadButton.setStyleSheet("""
+                            QPushButton{
+                                color: rgba(0, 0, 0, 0.2)
+                                border-radius: 16px;
+                            }
+                            QPushButton::hover{
+                                background-color: rgba(255, 255, 255, 1);          
+                            }
+        """)
+        
+        self.downloadButton.clicked.connect(self.handle_download)
+
+        self.rightBox.addWidget(self.downloadButton, 0, Qt.AlignRight)
+        self.rightBox.addWidget(self.downloadLabel, 0, Qt.AlignRight)
+        self.rightBox.addSpacing(15)
         self.rightBox.addWidget(self.miniVideoButton, 0, Qt.AlignRight)
         self.rightBox.addSpacing(15)
         self.rightBox.addWidget(self.fullscreenButton, 0, Qt.AlignRight)
-        self.rightBox.addSpacing(40)
+        # self.rightBox.addSpacing(40)
 
         self.containButtonsBox.addLayout(self.rightBox)
 
@@ -196,45 +226,13 @@ class VideoContent(QFrame):
         self.timeSlider.setPageStep(20)
         self.timeSlider.setAttribute(Qt.WA_TranslucentBackground, True)
 
-        gif_path = "assets/download.gif"
-        self.movie = QMovie(gif_path)
-        self.movie.setScaledSize(QSize(32, 32))
-
-        self.downloadLabel = QLabel()
-        self.downloadLabel.setMovie(self.movie)
-        self.downloadLabel.setStyleSheet("""
-                            QLabel{
-                                background-color: rgba(255, 255, 255, 0.05);
-                                color: rgba(0, 0, 0, 0.2)
-                                border-radius: 16px;
-                            }
-        """)
-        self.downloadLabel.hide()
-
-        self.downloadButton = QPushButton()
-        self.downloadButton.setIcon(QIcon("assets/download.png"))
-        self.downloadButton.setIconSize(QSize(32, 32))
-        self.downloadButton.setEnabled(False)
-        self.downloadButton.setStyleSheet("""
-                            QPushButton{
-                                background-color: rgba(255, 255, 255, 0.05);
-                                color: rgba(0, 0, 0, 0.2)
-                                border-radius: 16px;
-                            }
-                            QPushButton:hover{
-                                background-color: rgba(255, 255, 255, 1);          
-                            }
-        """)
-        
-        self.downloadButton.clicked.connect(self.handle_download)
-
         self.containerBox.addWidget(self.timeSlider)
         self.containerBox.addLayout(self.containButtonsBox)
 
         self.grid_layout = QGridLayout()
         self.grid_layout.addWidget(self.videoWidget, 0, 0)
-        self.grid_layout.addWidget(self.downloadButton, 0, 0, Qt.AlignTop | Qt.AlignRight)
-        self.grid_layout.addWidget(self.downloadLabel, 0, 0, Qt.AlignTop | Qt.AlignRight)
+        # self.grid_layout.addWidget(self.downloadButton, 0, 0, Qt.AlignTop | Qt.AlignRight)
+        # self.grid_layout.addWidget(self.downloadLabel, 0, 0, Qt.AlignTop | Qt.AlignRight)
         self.grid_layout.addWidget(self.frame, 0, 0, Qt.AlignBottom)
 
         self.setLayout(self.grid_layout)
@@ -369,7 +367,7 @@ class VideoContent(QFrame):
     def duration_change(self, duration):
         # print("In duration change")
         self.timeSlider.setRange(0, duration)
-        self.currentDuration = duration
+        # self.currentDuration = duration
         mtime = QTime(0, 0, 0, 0)
         mtime = mtime.addMSecs(self.media_player.duration())
         self.update_time_label()
@@ -423,6 +421,7 @@ class VideoContent(QFrame):
         url = self.media_player.media().canonicalUrl().url()
         if url and self.media_player.state() != QMediaPlayer.StoppedState:
             print("Co url")
+
             self.parent.open_folder_to_download()
         else:
             print("Khong co url")
@@ -461,7 +460,7 @@ class VideoContent(QFrame):
     
         try:
             with open("data/" + filename + "_data.json", "w") as file:
-                json.dump(listData, file)
+                json.dump(listData, file, indent=7)
         except:
             QMessageBox.warning(self.parent, "Warning", "Can't store your url to data")
 

@@ -94,11 +94,10 @@ class MyMediaPlayer(QMediaPlayer):
         self.parent.currentDuration = self.duration()
         self.stop()
         self.setMedia(QMediaContent(QUrl.fromLocalFile(file)))
-        self.parent.playButton.setEnabled(True)
         self.play()
         if self.state() != QMediaPlayer.StoppedState:
             self.parent.playButton.setEnabled(True)
-            self.parent.downloadButton.setEnable(True)
+            self.parent.downloadButton.setEnabled(True)
             self.myurl = file
             data = {
                     "id": None,

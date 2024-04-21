@@ -3,6 +3,8 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from ui.components.VideoContent import VideoContent
 from ui.components.VideoHaveSeen import VideoHaveSeen
+from ui.thread.DownloadThread import DownloadThread
+from threading import Thread
 from pytube import YouTube
 import m3u8_To_MP4
 from datetime import datetime
@@ -92,23 +94,22 @@ class MainFrame(QFrame):
     def open_folder_to_download(self):
         folder_path = QFileDialog.getExistingDirectory(self, "Select folder")
         if folder_path:
+            filename = ""
+            url = ""
             if self.videoContent.media_player.fileDataName == "youtube":
-                try:
-                    yt = YouTube(self.videoContent.media_player.youtubeUrl)
-                    stream = yt.streams.get_highest_resolution()
-                    self.before_download()
-                    stream.download(folder_path, self.get_current_time_as_string("youtube"))
-                    QMessageBox.information(self, "Success", "Download successfully!")
-                    self.after_download()
-                except Exception as e:
-                    print("Download error: ", e)
+                url = self.videoContent.media_player.youtubeUrl
+                filename = self.get_current_time_as_string("youtube")
+                self.before_download()
+                self.thread1 = DownloadThread(url, folder_path, filename, "youtube")
+                self.thread1.finished.connect(self.after_download)      
+                self.thread1.start()      
             elif "http" in self.videoContent.media_player.myurl:
-                try:
-                    self.before_download()
-                    self.multithread_download(self.videoContent.media_player.media().canonicalUrl().url(), mp4_file_dir=folder_path, mp4_file_name=self.get_current_time_as_string("network"))
-                    self.after_download()
-                except Exception as e:
-                    print("Download error: ", e)
+                url = self.videoContent.media_player.myurl
+                filename = self.get_current_time_as_string("network")
+                self.before_download()
+                self.thread2 = DownloadThread(url, folder_path, filename, "network")
+                self.thread2.finished.connect(self.after_download) 
+                self.thread2.start()                 
         else:
             print("Folder invalid!")
     
@@ -124,20 +125,6 @@ class MainFrame(QFrame):
         self.videoContent.downloadButton.show()
         self.videoContent.downloadButton.setEnabled(True)
 
-    def multithread_download(self, m3u8_uri, customized_http_header=None,
-                         max_retry_times=3, max_num_workers=100,
-                         mp4_file_dir='./', mp4_file_name='m3u8_To_MP4',
-                         tmpdir=None):
-        with m3u8_To_MP4.v2_multithreads_processor.MultiThreadsUriCrawler(m3u8_uri,
-                                                                        customized_http_header,
-                                                                        max_retry_times,
-                                                                        max_num_workers,
-                                                                        mp4_file_dir,
-                                                                        mp4_file_name,
-                                                                        tmpdir) as crawler:
-            crawler.fetch_mp4_by_m3u8_uri(True)
-            QMessageBox.information(self, "Success", "Download successfully!")
-
     def get_current_time_as_string(self, typefile):
         current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         return typefile + "_" + current_time          
@@ -146,13 +133,13 @@ class MainFrame(QFrame):
         if self.parent.windowState() & Qt.WindowFullScreen:
             # QApplication.setOverrideCursor(Qt.ArrowCursor)
             self.parent.showNormal()
-            self.videoContent.fullscreenButton.setIcon(QIcon("assets/expand.png"))
+            self.videoContent.fullscreenButton.setIcon(QIcon("assets/fullscreen.png"))
             self.actionFull.setText("Fullscreen (Ctrl + F)")
             print("no Fullscreen")
         else:
             self.parent.showFullScreen()
             # QApplication.setOverrideCursor(Qt.BlankCursor)
-            self.videoContent.fullscreenButton.setIcon(QIcon("assets/exit_fullscreen.png"))
+            self.videoContent.fullscreenButton.setIcon(QIcon("assets/normal_screen.png"))
             self.actionFull.setText("Normal Screen (Ctrl + F)")
             print("Fullscreen entered")
 

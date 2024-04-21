@@ -1,5 +1,6 @@
 import sys
 import json
+from PyQt5.QtMultimedia import QMediaPlayer
 from PyQt5.QtGui import QIcon, QCursor
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtWidgets import QGridLayout, QTabBar, QMessageBox, QVBoxLayout, QLabel, QWidget, QHBoxLayout, QFrame, \
@@ -135,6 +136,7 @@ class VideoHaveSeen(QFrame):
                                 ''')
                 self.vbox_layout_list.addWidget(btn_local)
                 btn_local.setProperty("url", url)
+                btn_local.setProperty("position", video["position"])
                 btn_local.clicked.connect(self.showPopupMenu)
 
             self.buttons[index] = btn_local
@@ -183,6 +185,7 @@ class VideoHaveSeen(QFrame):
                                     }
                                 """)
                 btn_network.setProperty("url", url)
+                btn_network.setProperty("position", video["position"])
                 btn_network.clicked.connect(self.showPopupMenu)
             self.buttons[index] = btn_network
         except Exception as e:
@@ -229,6 +232,7 @@ class VideoHaveSeen(QFrame):
                                 """)
                 btn_youtube.clicked.connect(self.showPopupMenu)
                 btn_youtube.setProperty("url", video["url"])
+                btn_youtube.setProperty("position", video["position"])
             self.buttons[index] = btn_youtube
         except Exception as e:
             print("file khong ton tai", e)
@@ -269,6 +273,7 @@ class VideoHaveSeen(QFrame):
         self.action2 = self.popup_menu.addAction(QIcon("assets/trash_red.png"), "Xóa")
         sender = self.sender()
         self.selected_url = sender.property("url")
+        self.position = sender.property("position")
         self.action1.triggered.connect(self.actionPlayer)
         self.action2.triggered.connect(self.actionDelete)
         # Lấy tọa độ của sự kiện chuột và hiển thị menu popup tại vị trí đó
@@ -289,13 +294,21 @@ class VideoHaveSeen(QFrame):
         elif text == "Network":
             self.parent.videoHaveSeen.hide()
             self.parent.videoContent.show()
+            self.parent.videoContent.currentPosition = self.parent.videoContent.media_player.position()
+            self.parent.videoContent.currentDuration = self.parent.videoContent.media_player.duration()
+            self.parent.videoContent.media_player.stop()
             self.parent.videoContent.media_player.play_from_url(False)
             self.parent.parent.navBar.on_button_clicked("Now Playing")
         elif text == "Youtube":
             self.parent.videoHaveSeen.hide()
             self.parent.videoContent.show()
+            self.parent.videoContent.currentPosition = self.parent.videoContent.media_player.position()
+            self.parent.videoContent.currentDuration = self.parent.videoContent.media_player.duration()
+            self.parent.videoContent.media_player.stop()
             self.parent.videoContent.media_player.get_youtube_url()
             self.parent.parent.navBar.on_button_clicked("Now Playing")
+        if self.parent.videoContent.media_player.state() != QMediaPlayer.StoppedState:
+            self.parent.videoContent.set_position(self.position)
     
     def actionDelete(self):
         # Yêu cầu xác nhận từ người dùng
