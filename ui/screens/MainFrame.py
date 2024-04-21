@@ -3,6 +3,9 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from ui.components.VideoContent import VideoContent
 from ui.components.VideoHaveSeen import VideoHaveSeen
+from pytube import YouTube
+import m3u8_To_MP4
+from datetime import datetime
 
 
 # This frame is use for containing content of screen, stay under of top menu bar
@@ -85,6 +88,59 @@ class MainFrame(QFrame):
         if fileName != '':
             self.videoContent.load_film(fileName)
             print("File loaded")
+
+    def open_folder_to_download(self):
+        folder_path = QFileDialog.getExistingDirectory(self, "Select folder")
+        if folder_path:
+            if self.videoContent.media_player.fileDataName == "youtube":
+                try:
+                    yt = YouTube(self.videoContent.media_player.youtubeUrl)
+                    stream = yt.streams.get_highest_resolution()
+                    self.before_download()
+                    stream.download(folder_path, self.get_current_time_as_string("youtube"))
+                    QMessageBox.information(self, "Success", "Download successfully!")
+                    self.after_download()
+                except Exception as e:
+                    print("Download error: ", e)
+            elif "http" in self.videoContent.media_player.myurl:
+                try:
+                    self.before_download()
+                    self.multithread_download(self.videoContent.media_player.media().canonicalUrl().url(), mp4_file_dir=folder_path, mp4_file_name=self.get_current_time_as_string("network"))
+                    self.after_download()
+                except Exception as e:
+                    print("Download error: ", e)
+        else:
+            print("Folder invalid!")
+    
+    def before_download(self):
+        self.videoContent.downloadButton.setEnabled(False)
+        self.videoContent.downloadButton.hide()
+        self.videoContent.downloadLabel.show()
+        self.videoContent.movie.start()
+
+    def after_download(self):
+        self.videoContent.movie.stop()
+        self.videoContent.downloadLabel.hide()
+        self.videoContent.downloadButton.show()
+        self.videoContent.downloadButton.setEnabled(True)
+
+    def multithread_download(self, m3u8_uri, customized_http_header=None,
+                         max_retry_times=3, max_num_workers=100,
+                         mp4_file_dir='./', mp4_file_name='m3u8_To_MP4',
+                         tmpdir=None):
+        with m3u8_To_MP4.v2_multithreads_processor.MultiThreadsUriCrawler(m3u8_uri,
+                                                                        customized_http_header,
+                                                                        max_retry_times,
+                                                                        max_num_workers,
+                                                                        mp4_file_dir,
+                                                                        mp4_file_name,
+                                                                        tmpdir) as crawler:
+            crawler.fetch_mp4_by_m3u8_uri(True)
+            QMessageBox.information(self, "Success", "Download successfully!")
+
+    def get_current_time_as_string(self, typefile):
+        current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        return typefile + "_" + current_time          
 
     def fullscreen(self, event = None):
         if self.parent.windowState() & Qt.WindowFullScreen:

@@ -173,17 +173,17 @@ class VideoContent(QFrame):
 
         self.containButtonsBox.addLayout(self.rightBox)
 
-        # tạo widget video cho mini video
-        self.miniVideoWidget = QVideoWidget()
-        self.miniVideoWidget.setStyleSheet("border-radius: 20px;")
-        # self.miniVideoWidget.mousePressEvent = self.play_pause_video
-        # self.miniVideoWidget.mouseDoubleClickEvent = self.parent.showFullScreen
+        # # tạo widget video cho mini video
+        # self.miniVideoWidget = QVideoWidget()
+        # self.miniVideoWidget.setStyleSheet("border-radius: 20px;")
+        # # self.miniVideoWidget.mousePressEvent = self.play_pause_video
+        # # self.miniVideoWidget.mouseDoubleClickEvent = self.parent.showFullScreen
         
-        self.miniVideoLayout = QHBoxLayout()
-        self.miniVideoLayout.addWidget(self.miniVideoWidget)
+        # self.miniVideoLayout = QHBoxLayout()
+        # self.miniVideoLayout.addWidget(self.miniVideoWidget)
 
-        self.miniVideoFrame = QFrame()
-        self.miniVideoFrame.setLayout(self.miniVideoLayout)
+        # self.miniVideoFrame = QFrame()
+        # self.miniVideoFrame.setLayout(self.miniVideoLayout)
 
 
         # Tạo thanh thời gian
@@ -196,12 +196,45 @@ class VideoContent(QFrame):
         self.timeSlider.setPageStep(20)
         self.timeSlider.setAttribute(Qt.WA_TranslucentBackground, True)
 
+        gif_path = "assets/download.gif"
+        self.movie = QMovie(gif_path)
+        self.movie.setScaledSize(QSize(32, 32))
+
+        self.downloadLabel = QLabel()
+        self.downloadLabel.setMovie(self.movie)
+        self.downloadLabel.setStyleSheet("""
+                            QLabel{
+                                background-color: rgba(255, 255, 255, 0.05);
+                                color: rgba(0, 0, 0, 0.2)
+                                border-radius: 16px;
+                            }
+        """)
+        self.downloadLabel.hide()
+
+        self.downloadButton = QPushButton()
+        self.downloadButton.setIcon(QIcon("assets/download.png"))
+        self.downloadButton.setIconSize(QSize(32, 32))
+        self.downloadButton.setEnabled(False)
+        self.downloadButton.setStyleSheet("""
+                            QPushButton{
+                                background-color: rgba(255, 255, 255, 0.05);
+                                color: rgba(0, 0, 0, 0.2)
+                                border-radius: 16px;
+                            }
+                            QPushButton:hover{
+                                background-color: rgba(255, 255, 255, 1);          
+                            }
+        """)
+        
+        self.downloadButton.clicked.connect(self.handle_download)
+
         self.containerBox.addWidget(self.timeSlider)
         self.containerBox.addLayout(self.containButtonsBox)
 
         self.grid_layout = QGridLayout()
         self.grid_layout.addWidget(self.videoWidget, 0, 0)
-        # self.grid_layout.addWidget(self.centerFrame, 0, 0, Qt.AlignCenter)
+        self.grid_layout.addWidget(self.downloadButton, 0, 0, Qt.AlignTop | Qt.AlignRight)
+        self.grid_layout.addWidget(self.downloadLabel, 0, 0, Qt.AlignTop | Qt.AlignRight)
         self.grid_layout.addWidget(self.frame, 0, 0, Qt.AlignBottom)
 
         self.setLayout(self.grid_layout)
@@ -343,6 +376,7 @@ class VideoContent(QFrame):
 
     def handleError(self):
         # self.playButton.setEnabled(False)
+        self.downloadButton.setEnabled(False)
         errorString = self.media_player.errorString()
         if "Cannot play stream of type:" in errorString:
             QMessageBox.critical(self.parent.parent, 'Error', errorString)
@@ -385,6 +419,14 @@ class VideoContent(QFrame):
     #     self.miniVideoFrame.show()
     #     # self.miniVideoFrame.update()
 
+    def handle_download(self):
+        url = self.media_player.media().canonicalUrl().url()
+        if url and self.media_player.state() != QMediaPlayer.StoppedState:
+            print("Co url")
+            self.parent.open_folder_to_download()
+        else:
+            print("Khong co url")
+            QMessageBox.warning(self, "Warning" ,"Can't download invalid file!")
 
     def store_url(self, dictData, filename):
         print("store url function")

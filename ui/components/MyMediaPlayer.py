@@ -50,6 +50,7 @@ class MyMediaPlayer(QMediaPlayer):
             if self.state() != QMediaPlayer.StoppedState:
                 print("# Nếu có thể phát thì set lại play button")
                 self.parent.playButton.setEnabled(True)
+                self.parent.downloadButton.setEnabled(True)
                 data = {
                     "id": None,
                     "url": self.youtubeUrl if isYTUrl else self.myurl,
@@ -96,6 +97,8 @@ class MyMediaPlayer(QMediaPlayer):
         self.parent.playButton.setEnabled(True)
         self.play()
         if self.state() != QMediaPlayer.StoppedState:
+            self.parent.playButton.setEnabled(True)
+            self.parent.downloadButton.setEnable(True)
             self.myurl = file
             data = {
                     "id": None,
