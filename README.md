@@ -74,29 +74,17 @@ apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreame
 dnf install gstreamer1-devel gstreamer1-plugins-base-tools gstreamer1-doc gstreamer1-plugins-base-devel gstreamer1-plugins-good gstreamer1-plugins-good-extras gstreamer1-plugins-ugly gstreamer1-plugins-bad-free gstreamer1-plugins-bad-free-devel gstreamer1-plugins-bad-free-extras
 ```
 For more option to download, go to <a href="https://gstreamer.freedesktop.org/documentation/installing/index.html">installing gstreamer</a>
-## Included Package
-* <a href="https://github.com/yjg30737/pyqt-resource-helper.git">pyqt-resource-helper</a>
-* <a href="https://github.com/yjg30737/pyqt-svg-button.git">pyqt-svg-button</a>
 
-## Feature
-* Frameless, movable.
-* When mouse cursor is hovering over the window, interface will be shown. 
+## Usage
 
-## Examples
-Code Sample
-```python
-from PyQt5.QtWidgets import QApplication
-from pyqt_video_player_pip_mode import PipVideoWidget
-
-
-if __name__ == '__main__':
-    import sys
-
-    app = QApplication(sys.argv)
-    pipVideoWidget = PipVideoWidget('pyqt_textbox_graphics_widget_example_video.mp4')
-    pipVideoWidget.show()
-    sys.exit(app.exec_())
+Run the application using Python3:
+```bash
+python3 /path/to/your/app/PythonMediaPlayer/main.py
 ```
+
+## Basic guide to use
+<b>1. Play video:</b>
+    * From url:
 
 Result
 
