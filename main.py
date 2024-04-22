@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QHBoxLayout, QWidget, QVB
 
 from ui.screens.MainFrame import MainFrame
 from ui.components.NavBar import Nav_Bar
-
+from ui.components.CustomTitleBar import TitleBar
 
 # Main container for all screen
 class MediaPlayer(QMainWindow):
@@ -14,10 +14,15 @@ class MediaPlayer(QMainWindow):
         super().__init__()
         # Tạo widget để chứa các thành phần bên trong
         self.central_widget = QWidget()
-        self.setCentralWidget(self.central_widget)
         self.central_widget.setWindowIcon(QIcon('assets/logo.png'))
-
         self.central_widget.setStyleSheet("background: black;")
+
+        self.setCentralWidget(self.central_widget)
+        self.setWindowFlag(Qt.FramelessWindowHint)
+        # self.setAttribute(Qt.WA_TranslucentBackground)
+
+        self.title_bar = TitleBar()
+        self.setMenuWidget(self.title_bar)
 
         # Tạo một layout để chứa các thành phần bên trong
         self.hBoxLayout = QVBoxLayout()

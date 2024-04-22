@@ -19,6 +19,7 @@ class TitleBar(QWidget):
         # Title label
         self.title_label = QLabel("My Video Player")
         self.title_label.setStyleSheet("font-weight: bold;")
+        layout.addSpacing(10)
         layout.addWidget(self.title_label, Qt.AlignLeft)
 
         # Minimize button
@@ -63,32 +64,3 @@ class TitleBar(QWidget):
         painter.setPen(Qt.NoPen)
         painter.setBrush(QColor(240, 240, 240))
         painter.drawRect(self.rect())
-
-
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
-
-        self.setWindowTitle("My Video Player")
-
-        # Remove default title bar
-        self.setWindowFlag(Qt.FramelessWindowHint)
-        # self.setAttribute(Qt.WA_TranslucentBackground)
-
-        # Custom title bar
-        self.title_bar = TitleBar()
-        self.setMenuWidget(self.title_bar)
-
-        # Example: Add a label
-        central_widget = QWidget()
-        layout = QHBoxLayout(central_widget)
-        label = QLabel("Content goes here")
-        layout.addWidget(label)
-        self.setCentralWidget(central_widget)
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())
