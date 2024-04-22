@@ -20,9 +20,48 @@ This Python application is a simple video player that allows you to play videos 
 1. Clone this repository:
 
 ```bash
-https://github.com/minhtuan1108/PythonMediaPlayer.git
+git clone https://github.com/minhtuan1108/PythonMediaPlayer.git
 cd PythonMediaPlayer
 ```
+2. Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+or install one by one dependency:
+
+* PyQt5 install:
+
+```bash
+pip install PyQt5
+```
+
+* PyQtWebEngine install:
+```bash
+pip install PyQtWebEngine
+```
+
+* pytube install:
+```bash
+pip install pytube
+```
+
+* ffmpeg install (for Linux):
+```bash
+# Ubuntu / Debian
+sudo apt-get update
+sudo apt-get install ffmpeg
+# CentOS / Fefora:
+sudo yum install epel-release
+sudo yum install ffmpeg
+```
+
+* m3u8-To-MP4 install:
+```bash
+python -m pip install m3u8_To_MP4
+```
+View more on <a href="https://github.com/h2soong/m3u8_To_MP4">m3u8-To-MP4</a>
 
 
 ## Included Package
