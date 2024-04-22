@@ -17,6 +17,12 @@ This Python application is a simple video player that allows you to play videos 
 * m3u8-To-MP4
 
 ## Installation
+1. Clone this repository:
+
+```bash
+https://github.com/minhtuan1108/PythonMediaPlayer.git
+cd PythonMediaPlayer
+```
 
 
 ## Included Package
