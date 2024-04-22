@@ -26,7 +26,7 @@ class VideoContent(QFrame):
 
         # Tạo khung chứa video
         self.videoWidget = QVideoWidget()
-        self.videoWidget.setStyleSheet("border-radius: 20px;")
+        self.videoWidget.setStyleSheet("""border-radius: 20px;background-color: black;""")
         self.videoWidget.mousePressEvent = self.play_pause_video
         self.videoWidget.mouseDoubleClickEvent = self.parent.show_fullscreen
 
@@ -234,6 +234,9 @@ class VideoContent(QFrame):
         # self.grid_layout.addWidget(self.downloadButton, 0, 0, Qt.AlignTop | Qt.AlignRight)
         # self.grid_layout.addWidget(self.downloadLabel, 0, 0, Qt.AlignTop | Qt.AlignRight)
         self.grid_layout.addWidget(self.frame, 0, 0, Qt.AlignBottom)
+        self.setStyleSheet("""
+                           background-color: black;
+                           """)
 
         self.setLayout(self.grid_layout)
 
