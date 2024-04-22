@@ -17,6 +17,20 @@ class VideoHaveSeen(QFrame):
         self.tab_bar.addTab("Network")
         self.tab_bar.addTab("Youtube")
         self.tab_bar.tabBarClicked.connect(self.tab_changed)
+        self.tab_bar.setStyleSheet("""
+                            QTabBar::tab {
+                                background-color: white ; /* Màu nền của tab */
+                                color: black; /* Màu chữ của tab */
+                                padding: 8px 16px; /* Kích thước padding */
+                                border-radius: 15%; /* Bo tròn góc trên bên trái */
+                                margin-bottom: 5px;
+                            }
+
+                            QTabBar::tab:selected {
+                                background-color: #A9A9A9; /* Màu nền của tab khi được chọn */
+                                color: white /* Màu chữ của tab khi được chọn */
+                            }
+                                   """)
 
         # Khung chua tab bar
         self.frame_tab = QFrame()
@@ -44,6 +58,39 @@ class VideoHaveSeen(QFrame):
         # Tạo một QScrollArea
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setStyleSheet("""
+                                       QScrollArea {
+                                            background-color: #f0f0f0; /* Màu nền của QScrollArea */
+                                        }
+
+                                        QScrollBar:vertical {
+                                            background: #f0f0f0; /* Màu nền của thanh cuộn dọc */
+                                            width: 12px; /* Độ rộng của thanh cuộn dọc */
+                                            border-radius: 6px; 
+                                            margin: 0px 0px 0px 0px;
+                                        }
+
+                                        QScrollBar::handle:vertical {
+                                            background: #c0c0c0; /* Màu nền của cần cuộn */
+                                            min-height: 20px; /* Chiều cao tối thiểu của cần cuộn */
+                                            border-radius: 6px; /* Đường cong góc của cần cuộn */
+                                        }
+
+                                        QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                                            background: transparent; /* Màu nền của các nút cuộn */
+                                            height: 0px; /* Chiều cao của các nút cuộn */
+                                            subcontrol-origin: margin;
+                                        }
+
+                                        QScrollBar::add-line:vertical {
+                                            subcontrol-position: bottom; /* Vị trí của nút cuộn dưới */
+                                        }
+
+                                        QScrollBar::sub-line:vertical {
+                                            subcontrol-position: top; /* Vị trí của nút cuộn trên */
+                                        }
+
+                                       """)
 
         # self.frame.setLayout(self.scroll_area)
         self.vbox_layout.addWidget(self.scroll_area)
@@ -54,7 +101,6 @@ class VideoHaveSeen(QFrame):
 
         self.vbox = QVBoxLayout()
         self.vbox.addWidget(self.frame_tab)
-        self.vbox.setSpacing(0)
         self.vbox.addWidget(self.frame)
         self.setLayout(self.vbox)
         # self.central_widget.setLayout(self.layout)
