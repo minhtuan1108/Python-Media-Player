@@ -10,6 +10,7 @@ This Python application is a simple video player that allows you to play videos 
 
 ## Requirements
 * Python 3.x
+* Gstreamer
 * PyQt5
 * PyQtWebEngine
 * pytube
@@ -49,10 +50,10 @@ pip install pytube
 
 * ffmpeg install (for Linux):
 ```bash
-# Ubuntu / Debian
+# On Ubuntu / Debian:
 sudo apt-get update
 sudo apt-get install ffmpeg
-# CentOS / Fefora:
+# On CentOS / Fedora:
 sudo yum install epel-release
 sudo yum install ffmpeg
 ```
@@ -61,9 +62,18 @@ sudo yum install ffmpeg
 ```bash
 python -m pip install m3u8_To_MP4
 ```
-View more on <a href="https://github.com/h2soong/m3u8_To_MP4">m3u8-To-MP4</a>
+View more on <a href="https://github.com/h2soong/m3u8_To_MP4">m3u8-To-MP4</a> github.
 
-
+3. Install Gstreamer:
+* On Ubuntu / Debian:
+```bash
+apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
+```
+* On Fedora:
+```bash
+dnf install gstreamer1-devel gstreamer1-plugins-base-tools gstreamer1-doc gstreamer1-plugins-base-devel gstreamer1-plugins-good gstreamer1-plugins-good-extras gstreamer1-plugins-ugly gstreamer1-plugins-bad-free gstreamer1-plugins-bad-free-devel gstreamer1-plugins-bad-free-extras
+```
+For more option to download, go to <a href="https://gstreamer.freedesktop.org/documentation/installing/index.html">installing gstreamer</a>
 ## Included Package
 * <a href="https://github.com/yjg30737/pyqt-resource-helper.git">pyqt-resource-helper</a>
 * <a href="https://github.com/yjg30737/pyqt-svg-button.git">pyqt-svg-button</a>
