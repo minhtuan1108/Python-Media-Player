@@ -243,7 +243,7 @@ class VideoContent(QFrame):
         actionURL = self.parent.menu.addAction(QIcon.fromTheme("browser"), "URL from Internet (Ctrl + W)")
         actionclipboard = self.parent.menu.addSeparator()
         actionYTurl = self.parent.menu.addAction(QIcon("assets/youtube.png"), "URL from YouTube (Ctrl + Y)")
-        actionOpenInputDialog = self.parent.menu.addAction("Open input dialog (Ctrl + N)")
+        actionOpenInputDialog = self.parent.menu.addAction(QIcon("assets/keyboard.png"), "Open input dialog (Ctrl + N)")
 
         actionFile.triggered.connect(self.parent.open_file)
         actionURL.triggered.connect(lambda: self.media_player.get_url_from_clip('http'))

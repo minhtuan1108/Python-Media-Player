@@ -68,7 +68,7 @@ class MainFrame(QFrame):
         self.menu.clear()
         # goi ham de add cac chuc nang cua xem video vao menu context
         self.videoContent.add_item_context_menu()
-        actionHistory = self.menu.addAction("History (Ctrl + H)")
+        actionHistory = self.menu.addAction(QIcon("assets/view_list.png"), "History (Ctrl + H)")
         actionclipboard = self.menu.addSeparator()
         self.actionFull = self.menu.addAction(QIcon.fromTheme("view-fullscreen"), "Normal screen (Ctrl + F)" if self.parent.windowState() & Qt.WindowFullScreen else "Fullscreen (Ctrl + F)")
         actionSep = self.menu.addSeparator()
