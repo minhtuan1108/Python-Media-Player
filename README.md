@@ -1,11 +1,23 @@
-# pyqt-video-player-pip-mode
-PyQt video player in PIP(Picture-in-picture) mode
+# Python Video Player App
+This Python application is a simple video player that allows you to play videos from various sources including local files, m3u8 files from the internet, and YouTube links. It provides basic functionalities such as play/pause, seek forward and backward by 10 seconds, and download video files,...
+
+## Features
+* Play Videos: Play videos from local files, m3u8 files, and YouTube links.
+* Seek Functionality: Seek forward and backward by 10 seconds.
+* Download Videos: Download video files to your local machine.
+* History: Let user know what they saw.
+* Simple Interface: User-friendly interface for easy navigation and control.
 
 ## Requirements
-* PyQt5 >= 5.15
+* Python 3.x
+* PyQt5
+* PyQtWebEngine
+* pytube
+* ffmpeg
+* m3u8-To-MP4
 
-## Setup
-```pip3 install git+https://github.com/yjg30737/pyqt-video-player-pip-mode.git --upgrade```
+## Installation
+
 
 ## Included Package
 * <a href="https://github.com/yjg30737/pyqt-resource-helper.git">pyqt-resource-helper</a>
