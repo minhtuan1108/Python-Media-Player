@@ -85,6 +85,7 @@ python3 /path/to/your/app/PythonMediaPlayer/main.py
 ## Basic guide to use
 <b>1. Play video:</b>
     * From url:
+       
 
 Result
 
