@@ -47,7 +47,7 @@ class MainFrame(QFrame):
         self.openInputDialog.activated.connect(self.videoContent.open_input_dialog)
         self.shortcutFullscreen = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_F), self)
         self.shortcutFullscreen.activated.connect(self.fullscreen)
-        self.shortcutHistory = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_F), self)
+        self.shortcutHistory = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_H), self)
         self.shortcutHistory.activated.connect(self.view_history)
         # self.shortcutInfo = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_I), self)
         # self.shortcutInfo.activated.connect(self.fullscreen)
@@ -145,8 +145,8 @@ class MainFrame(QFrame):
 
     def view_history(self):
         if not self.videoContent.isHidden():
-            self.videoContent.hide()
-            self.videoHaveSeen.show()
+            self.on_click_btn("Library")
+            self.parent.navBar.on_button_clicked("Library")
 
     def show_fullscreen(self, event):
         self.parent.showFullScreen()
