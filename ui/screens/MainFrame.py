@@ -114,13 +114,17 @@ class MainFrame(QFrame):
             print("Folder invalid!")
     
     def before_download(self):
+        # self.parent.title_bar.downloadingLabel.show()
+        # self.parent.title_bar.movie.start()
         self.videoContent.downloadButton.setEnabled(False)
         self.videoContent.downloadButton.hide()
         self.videoContent.downloadLabel.show()
         self.videoContent.movie.start()
 
     def after_download(self):
-        self.videoContent.movie.stop()
+        # self.parent.title_bar.movie.stop()
+        # self.parent.title_bar.downloadingLabel.hide()
+        # self.videoContent.movie.stop()
         self.videoContent.downloadLabel.hide()
         self.videoContent.downloadButton.show()
         self.videoContent.downloadButton.setEnabled(True)

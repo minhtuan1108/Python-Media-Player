@@ -18,33 +18,6 @@ class VideoHaveSeen(QFrame):
         self.tab_bar.addTab("Network")
         self.tab_bar.addTab("Youtube")
         self.tab_bar.tabBarClicked.connect(self.tab_changed)
-        self.tab_bar.setStyleSheet("""
-                                   /* Tab chưa được chọn */
-                                QTabBar::tab {
-                                    background-color: white; /* Màu nền của tab */
-                                    color: black; /* Màu chữ của tab */
-                                    padding: 8px 16px; /* Kích thước padding */
-                                    border-top-left-radius: 10px; /* Bo tròn góc trên bên trái */
-                                    border-top-right-radius: 10px; /* Bo tròn góc trên bên phải */
-                                }
-
-                                /* Tab được chọn */
-                                QTabBar::tab:selected {
-                                    background-color: gray; /* Màu nền của tab khi được chọn */
-                                    color: white; /* Màu chữ của tab khi được chọn */
-                                }
-
-                                /* Tab khi được hover */
-                                QTabBar::tab:hover {
-                                    background-color: #ddd; /* Màu nền của tab khi được hover */
-                                }
-
-                                /* Tab được focus */
-                                QTabBar::tab:focus {
-                                    background-color: #eee; /* Màu nền của tab khi được focus */
-                                }
-
-                                   """)
 
         # Khung chua tab bar
         self.frame_tab = QFrame()
@@ -72,38 +45,6 @@ class VideoHaveSeen(QFrame):
         # Tạo một QScrollArea
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
-        self.scroll_area.setStyleSheet("""
-                                       QScrollArea {
-                                        background-color: #f0f0f0; /* Màu nền của QScrollArea */
-                                    }
-
-                                    QScrollBar:vertical {
-                                        background: #f0f0f0; /* Màu nền của thanh cuộn dọc */
-                                        width: 12px; /* Độ rộng của thanh cuộn dọc */
-                                        margin: 0px 0px 0px 0px;
-                                        border-radius: 6px;
-                                    }
-
-                                    QScrollBar::handle:vertical {
-                                        background: #c0c0c0; /* Màu nền của cần cuộn */
-                                        min-height: 20px; /* Chiều cao tối thiểu của cần cuộn */
-                                        border-radius: 6px; /* Đường cong góc của cần cuộn */
-                                    }
-
-                                    QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
-                                        background: transparent; /* Màu nền của các nút cuộn */
-                                        height: 0px; /* Chiều cao của các nút cuộn */
-                                        subcontrol-origin: margin;
-                                    }
-
-                                    QScrollBar::add-line:vertical {
-                                        subcontrol-position: bottom; /* Vị trí của nút cuộn dưới */
-                                    }
-
-                                    QScrollBar::sub-line:vertical {
-                                        subcontrol-position: top; /* Vị trí của nút cuộn trên */
-                                    }
-                                       """)
 
         # self.frame.setLayout(self.scroll_area)
         self.vbox_layout.addWidget(self.scroll_area)
@@ -198,6 +139,7 @@ class VideoHaveSeen(QFrame):
                 btn_local.setProperty("url", url)
                 btn_local.setProperty("position", video["position"])
                 btn_local.clicked.connect(self.showPopupMenu)
+
             self.buttons[index] = btn_local
         except Exception as e:
             print("file khong ton tai", e)
@@ -329,15 +271,13 @@ class VideoHaveSeen(QFrame):
         )
         # Thêm các mục vào menu popup
         self.actionPlay = self.popup_menu.addAction(QIcon("assets/play_green.png"), "Play")
-        if self.index_saved != 0: 
-            self.actionDownload = self.popup_menu.addAction(QIcon("assets/download.png"),"Download")
+        self.actionDownload = self.popup_menu.addAction(QIcon("assets/download.png"),"Download")
         self.actionDel = self.popup_menu.addAction(QIcon("assets/trash_red.png"), "Delete")
         sender = self.sender()
         self.selected_url = sender.property("url")
         self.position = sender.property("position")
         self.actionPlay.triggered.connect(self.actionPlayer)
-        if self.index_saved != 0: 
-            self.actionDownload.triggered.connect(self.actionDownloadVideo)
+        self.actionDownload.triggered.connect(self.actionDownloadVideo)
         self.actionDel.triggered.connect(self.actionDelete)
         # Lấy tọa độ của sự kiện chuột và hiển thị menu popup tại vị trí đó
         cursor_pos = QCursor.pos()

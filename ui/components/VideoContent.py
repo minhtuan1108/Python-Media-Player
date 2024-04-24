@@ -348,10 +348,10 @@ class VideoContent(QFrame):
 
     def set_position(self, time):
         duration = self.media_player.duration()
-        # print("Time:", time)
-        # print("Duration", duration)
+        print("Time:", time)
+        print("Duration", duration)
         if time >= duration and duration > 0:
-            self.media_player.stop()
+            # self.media_player.stop()
             self.media_player.setPosition(duration)
             self.currentPosition = self.media_player.position()
         else:
