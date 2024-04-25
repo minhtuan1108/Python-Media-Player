@@ -84,13 +84,18 @@ python3 /path/to/your/app/PythonMediaPlayer/main.py
 
 ## Basic guide to use
 <b>1. Play video:</b>
-First right click to show menu context
-    * Choose play from url to play file m3u8 from the internet
+   First right click to show menu context
+   
+   * Choose play from url to play file m3u8 from the internet
     ![image](https://github.com/minhtuan1108/minhtuan1108.github.io/blob/main/repositories_data/python_media_player/typeUrl.png)
-    * Or choose play from youtube to play video from youtube link
+   
+   * Or choose play from youtube to play video from youtube link
     ![image](https://github.com/minhtuan1108/minhtuan1108.github.io/blob/main/repositories_data/python_media_player/typeYT.png)
-    * Or choose open local to play audio file from local
+   
+   * Or choose open local to play audio file from local
     ![image](https://github.com/minhtuan1108/minhtuan1108.github.io/blob/main/repositories_data/python_media_player/typeLocal.png)
+   
    * After choose type to play, app will get your url from clipboard or will show input url for play from url/youtube link.
       ![image](https://github.com/minhtuan1108/minhtuan1108.github.io/blob/main/repositories_data/python_media_player/nhapurl.png)
+   
    * For local file, app will open folder manager and you can choose your file to play
