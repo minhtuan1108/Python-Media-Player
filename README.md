@@ -84,18 +84,13 @@ python3 /path/to/your/app/PythonMediaPlayer/main.py
 
 ## Basic guide to use
 <b>1. Play video:</b>
-    * From url:
-
-Result
-
-<b>Note: Interface below was quite different compared to now.</b>
-
-When mouse cursor is over the pip window, interface will be shown.
-
-![image](https://user-images.githubusercontent.com/55078043/153712864-6e831c7d-d645-4ab5-81b5-c7ffa9a42517.png)
-
-When mouse cursor leaves, interface will be hidden.
-
-![image](https://user-images.githubusercontent.com/55078043/153712843-bdafd289-fefe-4978-94c5-66ec2cf4646d.png)
-
-Result video is preview of <a href="https://github.com/yjg30737/pyqt-textbox-graphics-widget.git">pyqt-textbox-graphics-widget</a>.
+First right click to show menu context
+    * Choose play from url to play file m3u8 from the internet
+    ![image](https://github.com/minhtuan1108/minhtuan1108.github.io/blob/main/repositories_data/python_media_player/typeUrl.png)
+    * Or choose play from youtube to play video from youtube link
+    ![image](https://github.com/minhtuan1108/minhtuan1108.github.io/blob/main/repositories_data/python_media_player/typeYT.png)
+    * Or choose open local to play audio file from local
+    ![image](https://github.com/minhtuan1108/minhtuan1108.github.io/blob/main/repositories_data/python_media_player/typeLocal.png)
+   * After choose type to play, app will get your url from clipboard or will show input url for play from url/youtube link.
+      ![image](https://github.com/minhtuan1108/minhtuan1108.github.io/blob/main/repositories_data/python_media_player/nhapurl.png)
+   * For local file, app will open folder manager and you can choose your file to play
