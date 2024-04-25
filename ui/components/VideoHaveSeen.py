@@ -358,6 +358,7 @@ class VideoHaveSeen(QFrame):
             self.parent.videoContent.media_player.stop()
             self.parent.videoContent.media_player.load_film(myurl)
             self.parent.parent.navBar.on_button_clicked("Now Playing")
+            self.newposition = self.get_new_positon()
         elif text == "Network":
             self.parent.videoHaveSeen.hide()
             self.parent.videoContent.show()
@@ -366,6 +367,7 @@ class VideoHaveSeen(QFrame):
             self.parent.videoContent.media_player.stop()
             self.parent.videoContent.media_player.play_from_url(False)
             self.parent.parent.navBar.on_button_clicked("Now Playing")
+            self.newposition = self.get_new_positon()
         elif text == "Youtube":
             self.parent.videoHaveSeen.hide()
             self.parent.videoContent.show()
