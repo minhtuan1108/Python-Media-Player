@@ -99,3 +99,14 @@ python3 /path/to/your/app/PythonMediaPlayer/main.py
       ![image](https://github.com/minhtuan1108/minhtuan1108.github.io/blob/main/repositories_data/python_media_player/nhapurl.png)
    
    * For local file, app will open folder manager and you can choose your file to play
+<b>2. View history:</b>
+   There is three tag in history(library) folder:
+
+   * Local history (place to store your video you seen from local file:
+     ![image](https://github.com/minhtuan1108/minhtuan1108.github.io/blob/main/repositories_data/python_media_player/tablocal.png)
+     
+   * Youtube history (store your history played file in youtube links):
+     ![image](https://github.com/minhtuan1108/minhtuan1108.github.io/blob/main/repositories_data/python_media_player/tabytb.png)
+     
+   * Network history (place to store file you played from url):
+     ![image](https://github.com/minhtuan1108/minhtuan1108.github.io/blob/main/repositories_data/python_media_player/tabnetwork.png)
