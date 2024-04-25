@@ -18,6 +18,33 @@ class VideoHaveSeen(QFrame):
         self.tab_bar.addTab("Network")
         self.tab_bar.addTab("Youtube")
         self.tab_bar.tabBarClicked.connect(self.tab_changed)
+        self.tab_bar.setStyleSheet("""
+                                   /* Tab chưa được chọn */
+                                QTabBar::tab {
+                                    background-color: white; /* Màu nền của tab */
+                                    color: black; /* Màu chữ của tab */
+                                    padding: 8px 16px; /* Kích thước padding */
+                                    border-top-left-radius: 10px; /* Bo tròn góc trên bên trái */
+                                    border-top-right-radius: 10px; /* Bo tròn góc trên bên phải */
+                                }
+
+                                /* Tab được chọn */
+                                QTabBar::tab:selected {
+                                    background-color: gray; /* Màu nền của tab khi được chọn */
+                                    color: white; /* Màu chữ của tab khi được chọn */
+                                }
+
+                                /* Tab khi được hover */
+                                QTabBar::tab:hover {
+                                    background-color: #ddd; /* Màu nền của tab khi được hover */
+                                }
+
+                                /* Tab được focus */
+                                QTabBar::tab:focus {
+                                    background-color: #eee; /* Màu nền của tab khi được focus */
+                                }
+
+                                   """)
 
         # Khung chua tab bar
         self.frame_tab = QFrame()
@@ -45,6 +72,38 @@ class VideoHaveSeen(QFrame):
         # Tạo một QScrollArea
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setStyleSheet("""
+                                QScrollArea {
+                                background-color: #f0f0f0; /* Màu nền của QScrollArea */
+                            }
+
+                            QScrollBar:vertical {
+                                background: #f0f0f0; /* Màu nền của thanh cuộn dọc */
+                                width: 12px; /* Độ rộng của thanh cuộn dọc */
+                                margin: 0px 0px 0px 0px;
+                                border-radius: 6px;
+                            }
+
+                            QScrollBar::handle:vertical {
+                                background: #c0c0c0; /* Màu nền của cần cuộn */
+                                min-height: 20px; /* Chiều cao tối thiểu của cần cuộn */
+                                border-radius: 6px; /* Đường cong góc của cần cuộn */
+                            }
+
+                            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                                background: transparent; /* Màu nền của các nút cuộn */
+                                height: 0px; /* Chiều cao của các nút cuộn */
+                                subcontrol-origin: margin;
+                            }
+
+                            QScrollBar::add-line:vertical {
+                                subcontrol-position: bottom; /* Vị trí của nút cuộn dưới */
+                            }
+
+                            QScrollBar::sub-line:vertical {
+                                subcontrol-position: top; /* Vị trí của nút cuộn trên */
+                            }
+                                """)
 
         # self.frame.setLayout(self.scroll_area)
         self.vbox_layout.addWidget(self.scroll_area)
@@ -284,6 +343,8 @@ class VideoHaveSeen(QFrame):
         self.popup_menu.exec_(cursor_pos)
 
     def actionPlayer(self):
+        
+        print("log position:", self.position)
         index_action = self.index_saved
         text = self.tab_bar.tabText(index_action)
         myurl = self.selected_url
@@ -292,6 +353,9 @@ class VideoHaveSeen(QFrame):
         if text == "Local":
             self.parent.videoHaveSeen.hide()
             self.parent.videoContent.show()
+            self.parent.videoContent.currentPosition = self.parent.videoContent.media_player.position()
+            self.parent.videoContent.currentDuration = self.parent.videoContent.media_player.duration()
+            self.parent.videoContent.media_player.stop()
             self.parent.videoContent.media_player.load_film(myurl)
             self.parent.parent.navBar.on_button_clicked("Now Playing")
         elif text == "Network":
@@ -310,8 +374,19 @@ class VideoHaveSeen(QFrame):
             self.parent.videoContent.media_player.stop()
             self.parent.videoContent.media_player.get_youtube_url()
             self.parent.parent.navBar.on_button_clicked("Now Playing")
+            self.newposition = self.get_new_positon()
         if self.parent.videoContent.media_player.state() != QMediaPlayer.StoppedState:
-            self.parent.videoContent.set_position(self.position)
+            self.parent.videoContent.set_position(self.newposition)
+    
+    def get_new_positon(self):
+        # Đọc dữ liệu từ tệp
+        with open(self.filename, "r") as f:
+            data = json.load(f)
+        for item in data: 
+            if item.get("url") == self.selected_url:
+                new_position = item.get("position")
+        print("vvvvvvvvvvvvvvvv",new_position)
+        return new_position
     
     def actionDownloadVideo(self):
         folder_path = QFileDialog.getExistingDirectory(self, "Select folder")
@@ -322,7 +397,7 @@ class VideoHaveSeen(QFrame):
                 filename = self.parent.get_current_time_as_string("network")
                 self.parent.before_download()
                 self.thread1 = DownloadThread(url, folder_path, filename, "network")
-                self.thread1.finished.connect(self.after_download)      
+                self.thread1.finished.connect(self.parent.after_download)      
                 self.thread1.start()      
             elif self.index_saved == 2:
                 url = self.selected_url
@@ -354,7 +429,7 @@ class VideoHaveSeen(QFrame):
             # Ghi dữ liệu đã cập nhật vào tệp
             try:
                 with open(self.filename, "w") as f:
-                    json.dump(new_data, f, indent=6)
+                    json.dump(new_data, f, indent=7)
                 print("Dữ liệu đã được ghi vào tệp thành công.")
             except Exception as e:
                 print("Có lỗi xảy ra khi ghi dữ liệu vào tệp:", e)

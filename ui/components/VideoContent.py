@@ -317,6 +317,7 @@ class VideoContent(QFrame):
             # print("Huy o giay thu: ", self.currentPosition)
             # print("Duration hien tai: ", self.currentDuration)
             # Store last position video
+            
             url = self.media_player.youtubeUrl if self.media_player.fileDataName == "youtube" else self.media_player.myurl
             # print("Url: ", url)
             self.update_url(self.media_player.fileDataName, url, self.currentPosition, self.currentDuration)
@@ -484,7 +485,7 @@ class VideoContent(QFrame):
 
         try:
             with open("data/" + filename + "_data.json", "w") as file:
-                json.dump(listData, file)
+                json.dump(listData, file, indent=7)
         except:
             print("Can't update position time")
 
