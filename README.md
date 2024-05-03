@@ -107,4 +107,4 @@ python3 /path/to/your/app/PythonMediaPlayer/main.py
 
 ## License
 
-This project granted by [Giấy Phép MIT](LICENSE).
+This project granted by [LICENSE](LICENSE).
