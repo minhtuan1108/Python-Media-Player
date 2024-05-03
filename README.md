@@ -26,12 +26,6 @@ cd PythonMediaPlayer
 ```
 2. Install dependencies:
 
-```bash
-pip install -r requirements.txt
-```
-
-or install one by one dependency:
-
 * PyQt5 install:
 
 ```bash
