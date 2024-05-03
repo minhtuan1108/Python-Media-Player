@@ -104,3 +104,7 @@ python3 /path/to/your/app/PythonMediaPlayer/main.py
      
    * Network history (place to store file you played from url):
      ![image](https://github.com/minhtuan1108/minhtuan1108.github.io/blob/main/repositories_data/python_media_player/tabnetwork.png)
+
+## License
+
+This project granted by [Giấy Phép MIT](LICENSE).
