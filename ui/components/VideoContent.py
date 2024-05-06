@@ -126,6 +126,7 @@ class VideoContent(QFrame):
         self.volumeSlider.setMaximum(100)
         self.volumeSlider.setValue(self.currentVolume)  # Default volume
         self.volumeSlider.sliderMoved.connect(self.changeVolume)  
+        self.volumeSlider.mousePressEvent = self.volumnSliderClicked
         self.volumeSlider.setStyleSheet(stylesheet(self))
 
         # Tao frame fix voi noi dung de xu ly su kien
@@ -221,9 +222,12 @@ class VideoContent(QFrame):
         self.timeSlider.setStyleSheet(stylesheet(self))
         self.timeSlider.setRange(0, 100)
         self.timeSlider.setValue(100)
+        # self.timeSlider.sliderPressed.connect(self.sliderClicked)
+        # self.timeSlider.sliderReleased.connect(self.sliderClicked)
+        self.timeSlider.mousePressEvent = self.timeSliderClicked
         self.timeSlider.sliderMoved.connect(self.set_position)
-        self.timeSlider.setSingleStep(2)
-        self.timeSlider.setPageStep(20)
+        # self.timeSlider.setSingleStep(2)
+        # self.timeSlider.setPageStep(20)
         self.timeSlider.setAttribute(Qt.WA_TranslucentBackground, True)
 
         self.containerBox.addWidget(self.timeSlider)
@@ -489,6 +493,17 @@ class VideoContent(QFrame):
         except:
             print("Can't update position time")
 
+    def timeSliderClicked(self, event):
+        print("Slider width: ", self.timeSlider.width())
+        value = event.x()*self.timeSlider.maximum()/self.timeSlider.width()
+        print("Slider position:", value)
+        self.set_position(int(value))
+        
+    def volumnSliderClicked(self, event):
+        print("Slider width: ", self.timeSlider.width())
+        value = event.x()*self.volumeSlider.maximum()/self.volumeSlider.width()
+        print("Slider position:", value)
+        self.changeVolume(int(value))
 
 
 

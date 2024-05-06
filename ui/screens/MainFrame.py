@@ -131,7 +131,7 @@ class MainFrame(QFrame):
 
     def get_current_time_as_string(self, typefile):
         current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        return typefile + "_" + current_time          
+        return typefile + "_" + current_time + ".mp4"          
 
     def fullscreen(self, event = None):
         if self.parent.windowState() & Qt.WindowFullScreen:
