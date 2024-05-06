@@ -330,13 +330,17 @@ class VideoHaveSeen(QFrame):
         )
         # Thêm các mục vào menu popup
         self.actionPlay = self.popup_menu.addAction(QIcon("assets/play_green.png"), "Play")
-        self.actionDownload = self.popup_menu.addAction(QIcon("assets/download.png"),"Download")
+        # self.actionDownload = self.popup_menu.addAction(QIcon("assets/download.png"),"Download")
+        if self.index_saved != 0: 
+            self.actionDownload = self.popup_menu.addAction(QIcon("assets/download.png"),"Download")
         self.actionDel = self.popup_menu.addAction(QIcon("assets/trash_red.png"), "Delete")
         sender = self.sender()
         self.selected_url = sender.property("url")
         self.position = sender.property("position")
         self.actionPlay.triggered.connect(self.actionPlayer)
-        self.actionDownload.triggered.connect(self.actionDownloadVideo)
+        # self.actionDownload.triggered.connect(self.actionDownloadVideo)
+        if self.index_saved != 0: 
+            self.actionDownload.triggered.connect(self.actionDownloadVideo)
         self.actionDel.triggered.connect(self.actionDelete)
         # Lấy tọa độ của sự kiện chuột và hiển thị menu popup tại vị trí đó
         cursor_pos = QCursor.pos()
