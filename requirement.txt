@@ -1,0 +1,5 @@
+PyQt5==5.15.4
+PyQtWebEngine==5.15.4
+pytube==11.0.1
+ffmpeg-python==0.2.0
+m3u8==0.11.0

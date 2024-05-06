@@ -1,5 +1,6 @@
 # Python Video Player App
 This Python application is a simple video player that allows you to play videos from various sources including local files, m3u8 files from the internet, and YouTube links. It provides basic functionalities such as play/pause, seek forward and backward by 10 seconds, and download video files,...
+* Website: <a href="https://vunguyen20122002.github.io/WebViewVideoStreaming/#home">Media Player Streaming</a>
 
 ## Features
 * Play Videos: Play videos from local files, m3u8 files, and YouTube links.
