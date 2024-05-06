@@ -1,5 +1,6 @@
 # Python Video Player App
 This Python application is a simple video player that allows you to play videos from various sources including local files, m3u8 files from the internet, and YouTube links. It provides basic functionalities such as play/pause, seek forward and backward by 10 seconds, and download video files,...
+* Website: <a href="https://vunguyen20122002.github.io/WebViewVideoStreaming/#home">Media Player Streaming</a>
 
 ## Features
 * Play Videos: Play videos from local files, m3u8 files, and YouTube links.
@@ -25,12 +26,6 @@ git clone https://github.com/minhtuan1108/PythonMediaPlayer.git
 cd PythonMediaPlayer
 ```
 2. Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-or install one by one dependency:
 
 * PyQt5 install:
 
@@ -99,6 +94,7 @@ python3 /path/to/your/app/PythonMediaPlayer/main.py
       ![image](https://github.com/minhtuan1108/minhtuan1108.github.io/blob/main/repositories_data/python_media_player/nhapurl.png)
    
    * For local file, app will open folder manager and you can choose your file to play
+     
 <b>2. View history:</b>
    There is three tag in history(library) folder:
 
@@ -110,3 +106,7 @@ python3 /path/to/your/app/PythonMediaPlayer/main.py
      
    * Network history (place to store file you played from url):
      ![image](https://github.com/minhtuan1108/minhtuan1108.github.io/blob/main/repositories_data/python_media_player/tabnetwork.png)
+
+## License
+
+This project granted by [LICENSE](LICENSE).
